@@ -3,6 +3,7 @@
 set -e
 
 where=${1:-"${HOME}/.local"}
+mkdir -p "${where}"
 
 # System-specific part:
 if [ -f "/etc/lsb-release" ]; then
@@ -21,14 +22,18 @@ if [ -f "/etc/lsb-release" ]; then
         rm   -f atom-amd64.deb
         apt-get clean
 EOF
-      export OPENSSL_LIBDIR="/usr/lib/x86_64-linux-gnu/"
+      export OPENSSL_INCDIR="/usr/include"
+      export OPENSSL_LIBDIR="/usr/lib/x86_64-linux-gnu"
       ;;
     *)
       echo "Distro ${DISTRIB_ID} is not supported."
       ;;
   esac
 else
-  for what in readline curl unzip git nodejs python3; do
+  xcode-select --install 2> /dev/null || true
+  brew --help > /dev/null 2>&1 || \
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  for what in readline openssl curl unzip git nodejs python3; do
     brew install "${what}" || brew upgrade "${what}"
   done
   pip3 install --upgrade pip
@@ -37,13 +42,16 @@ else
     brew tap caskroom/cask
     brew cask install atom
   fi
-  export OPENSSL_LIBDIR="/usr/lib/x86_64-linux-gnu/"
-  export PATH="/Applications/Atom.app/Contents/Resources/app/apm/bin/:${PATH}"
+  export OPENSSL_INCDIR="/usr/local/opt/openssl/include"
+  export OPENSSL_LIBDIR="/usr/local/opt/openssl/lib"
+  export PATH="/usr/local/bin/:${PATH}"
+  cp "/sbin/md5" "/usr/local/bin/md5sum" # this is ugly
 fi
 
 # System-independent part:
-hererocks --patch --luajit=2.1 --luarocks=^ "${where}"
-luarocks install luasec
+export PATH="${where}/bin:${PATH}"
+hererocks --patch --lua=5.3 --luarocks=^ "${where}"
+luarocks install luasec OPENSSL_INCDIR="${OPENSSL_INCDIR}" OPENSSL_LIBDIR="${OPENSSL_LIBDIR}"
 luarocks install ansicolors
 luarocks install argparse
 luarocks install busted
@@ -92,3 +100,9 @@ lua -e '
 '
 json2cson "${HOME}/.atom/config.json" > "${HOME}/.atom/config.cson"
 rm "${HOME}/.atom/config.json"
+
+if [ -f "${HOME}/.bashrc" ]; then
+  echo "export PATH=${where}:\$PATH" >> "${HOME}/.bashrc"
+elif [ "${HOME}/.bash_profile" ]; then
+  echo "export PATH=${where}:\$PATH" >> "${HOME}/.bash_profile"
+fi
