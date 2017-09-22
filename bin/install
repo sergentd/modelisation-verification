@@ -1,0 +1,94 @@
+#! /usr/bin/env bash
+
+set -e
+
+where=${1:-"${HOME}/.local"}
+
+# System-specific part:
+if [ -f "/etc/lsb-release" ]; then
+  source /etc/lsb-release
+  case "${DISTRIB_ID}/${DISTRIB_RELEASE}/$(uname -m)" in
+    "Ubuntu/16.04/x86_64")
+      sudo -s -H -- <<"EOF"
+        set -e
+        apt-get update
+        apt-get clean
+        apt-get install --yes libreadline-dev libssl-dev curl unzip git nodejs python-pip
+        pip install --upgrade pip
+        pip install hererocks
+        curl -L https://atom.io/download/deb -o atom-amd64.deb
+        dpkg -i atom-amd64.deb || apt-get -f install --yes
+        rm   -f atom-amd64.deb
+        apt-get clean
+EOF
+      export OPENSSL_LIBDIR="/usr/lib/x86_64-linux-gnu/"
+      ;;
+    *)
+      echo "Distro ${DISTRIB_ID} is not supported."
+      ;;
+  esac
+else
+  for what in readline curl unzip git nodejs python3; do
+    brew install "${what}" || brew upgrade "${what}"
+  done
+  pip3 install --upgrade pip
+  pip3 install hererocks
+  if [ ! -d /Applications/Atom.app ]; then
+    brew tap caskroom/cask
+    brew cask install atom
+  fi
+  export OPENSSL_LIBDIR="/usr/lib/x86_64-linux-gnu/"
+  export PATH="/Applications/Atom.app/Contents/Resources/app/apm/bin/:${PATH}"
+fi
+
+# System-independent part:
+hererocks --patch --luajit=2.1 --luarocks=^ "${where}"
+luarocks install luasec
+luarocks install ansicolors
+luarocks install argparse
+luarocks install busted
+luarocks install cluacov
+luarocks install luacheck
+luarocks install lua-cjson
+luarocks install uuid
+apm install atom-format-lua
+apm install language-lua
+apm install linter
+apm install linter-luacheck
+apm install cson
+ln -s "/usr/bin/nodejs" \
+      "${where}/bin/node"
+ln -s "${HOME}/.atom/packages/cson/node_modules/cson/bin/cson2json" \
+      "${where}/bin/cson2json"
+ln -s "${HOME}/.atom/packages/cson/node_modules/cson/bin/json2cson" \
+      "${where}/bin/json2cson"
+if [ -f "${HOME}/.atom/config.cson" ]; then
+  cson2json "${HOME}/.atom/config.cson" > "${HOME}/.atom/config.json"
+else
+  echo "{}" > "${HOME}/.atom/config.json"
+fi
+lua -e '
+  local json = require "cjson"
+  local uuid = require "uuid"
+  data = {
+    ["*"] = {
+      ["welcome"] = {
+        showOnStartup = true,
+      },
+      ["exception-reporting"] = {
+        userId = uuid (),
+      },
+      ["linter-luacheck"] = {
+        executable = os.getenv "HOME" .. "/.local/bin/luacheck",
+        globals    = {
+          "--std=lua53+busted"
+        },
+      },
+    },
+  }
+  file = io.open (os.getenv "HOME" .. "/.atom/config.json", "w")
+  file:write (json.encode (data))
+  file:close ()
+'
+json2cson "${HOME}/.atom/config.json" > "${HOME}/.atom/config.cson"
+rm "${HOME}/.atom/config.json"
