@@ -26,7 +26,6 @@ We have taken great care to make it as simple as possible.
   Ask GitHub for a [Student Pack](https://education.github.com/pack) to obtain
   free private repositories.
 * [MacOS High Sierra](https://www.apple.com/macos/high-sierra/)
-  with [Homebrew](https://brew.sh),
   or [Ubuntu 16.04 LTS 64bits](https://www.ubuntu.com/download/desktop),
   in a virtual machine, using for instance [VirtualBox](http://virtualbox.org),
   or directly with a dual boot.
