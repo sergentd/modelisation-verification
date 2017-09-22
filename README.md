@@ -40,11 +40,12 @@ You also have to:
   into your account.
 * [Make your fork *private*](https://help.github.com/articles/making-a-public-repository-private/)
 * [Add as collaborators](https://help.github.com/articles/inviting-collaborators-to-a-personal-repository/)
-  the users: `saucisson` (Alban Linard) and `mencattini` (Romain Mencattini).
+  the users: [`saucisson`](https://github.com/saucisson) (Alban Linard)
+  and [`mencattini`](https://github.com/mencattini) (Romain Mencattini).
 * Run the following script to install dependencies:
 
   ```sh
-    curl -s https://raw.githubusercontent.com/cui-unige/modeling-verification/master/bin/install | bash /dev/stdin
+    curl -s https://raw.githubusercontent.com/cui-unige/modelisation-verification/master/bin/install | bash /dev/stdin
   ```
 
 The environment you installed contains:
