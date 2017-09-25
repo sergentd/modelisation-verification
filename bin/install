@@ -9,7 +9,7 @@ mkdir -p "${where}"
 if [ -f "/etc/lsb-release" ]; then
   source /etc/lsb-release
   case "${DISTRIB_ID}/${DISTRIB_RELEASE}/$(uname -m)" in
-    "Ubuntu/16.04/x86_64")
+    "Ubuntu/1[67].04/x86_64")
       sudo -s -H -- <<"EOF"
         set -e
         apt-get update
@@ -102,7 +102,7 @@ json2cson "${HOME}/.atom/config.json" > "${HOME}/.atom/config.cson"
 rm "${HOME}/.atom/config.json"
 
 if [ -f "${HOME}/.bashrc" ]; then
-  echo "export PATH=${where}:\$PATH" >> "${HOME}/.bashrc"
+  echo "export PATH=${where}/bin:\$PATH" >> "${HOME}/.bashrc"
 elif [ "${HOME}/.bash_profile" ]; then
-  echo "export PATH=${where}:\$PATH" >> "${HOME}/.bash_profile"
+  echo "export PATH=${where}/bin:\$PATH" >> "${HOME}/.bash_profile"
 fi
