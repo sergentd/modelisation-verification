@@ -35,9 +35,28 @@ You also have to:
 * [Watch](https://github.com/cui-unige/modelisation-verification/subscription)
   the [course page](https://github.com/cui-unige/modelisation-verification)
   to get notifications about the course.
-* [Fork it](https://github.com/cui-unige/modelisation-verification#fork-destination-box)
-  into your account.
-* [Make your fork *private*](https://help.github.com/articles/making-a-public-repository-private/)
+* [Create a **private** repository](https://help.github.com/articles/creating-a-new-repository/)
+  named `modelisation-verification` (exactly).
+* [Clone the course repository](https://help.github.com/articles/cloning-a-repository/)
+
+  ```sh
+  git clone --bare https://github.com/cui-unige/modelisation-verification.git
+  ```
+
+* [Duplicate the course repository into your private one](https://help.github.com/articles/duplicating-a-repository/)
+
+  ```sh
+  cd modelisation-verification
+  git push --mirror https://github.com/votreusername/modelisation-verification.git
+  ```
+
+* Update the repository information
+
+  ```sh
+  atom .git/config
+  ```
+
+  And replace `cui-unige` by your GitHub username.
 * [Add as collaborators](https://help.github.com/articles/inviting-collaborators-to-a-personal-repository/)
   the users: [`saucisson`](https://github.com/saucisson) (Alban Linard)
   and [`mencattini`](https://github.com/mencattini) (Romain Mencattini).
@@ -56,6 +75,8 @@ The environment you installed contains:
   a package manager for Lua;
 * [Atom](https://atom.io):
   the editor we will use.
+  On the first launch, Atom asks to install some missing modules.
+  Do not forget to accept, or your environment will be broken.
 
 ## Rules
 
