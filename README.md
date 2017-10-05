@@ -128,6 +128,12 @@ The deadline is 11 october 2017 at 23:59.
 We will clone all your repositories using a script,
 so make sure that @saucisson and @mencattini have read access.
 
+Please install dependencies by running:
+
+```sh
+luarocks install rockspec/fun-scm-1.rockspec
+```
+
 Evaluation will be:
 
 * do you have done anything at the deadline?
