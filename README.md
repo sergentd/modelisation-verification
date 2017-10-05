@@ -48,7 +48,7 @@ You also have to:
 
   ```sh
   cd modelisation-verification
-  git push --mirror https://github.com/votreusername/modelisation-verification.git
+  git push --mirror https://github.com/yourusername/modelisation-verification.git
   ```
 
 * Update the repository information
@@ -58,6 +58,12 @@ You also have to:
   ```
 
   And replace `cui-unige` by your GitHub username.
+* Set the upstream repository:
+
+  ```sh
+  git remote add upstream https://github.com/cui-unige/modelisation-verification.git
+  ```
+
 * [Add as collaborators](https://help.github.com/articles/inviting-collaborators-to-a-personal-repository/)
   the users: [`saucisson`](https://github.com/saucisson) (Alban Linard)
   and [`mencattini`](https://github.com/mencattini) (Romain Mencattini).
@@ -78,6 +84,14 @@ The environment you installed contains:
   the editor we will use.
   On the first launch, Atom asks to install some missing modules.
   Do not forget to accept, or your environment will be broken.
+
+Make sure that your [repository is up-to-date](https://help.github.com/articles/syncing-a-fork/)
+by running frequently:
+
+```sh
+  git fetch upstream
+  git merge upstream master
+```
 
 ## Rules
 
