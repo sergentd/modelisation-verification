@@ -90,29 +90,46 @@ The environment you installed contains:
   without warnings or errors.
 * Your tests must cover at least 80% of the source code, excluding test files.
 
-## Evaluation
+## Homework
 
-Evaluation follows the questions:
-* Have you done anything at the deadline?
-  (no: 0 points)
+* All homeworks are located in the `homework/` directory.
+* For warnings about your code, we use [LuaCheck](https://github.com/mpeterv/luacheck).
+  It is already installed in your environment,
+  and can be run using: `luacheck src/`.
+* For testing, we use [Busted](http://olivinelabs.com/busted/).
+  It is already installed in your environment,
+  and can run all the tests within `*_spec.lua` files using: `busted src/`.
+* For code coverage, we use [LuaCov](http://keplerproject.github.io/luacov/).
+  It is already installed in your environment,
+  and can be run using: `luacov`.
+
+### Homework #1
+
+The source files are located within: `homework/petrinets/`.
+The deadline is 11 october 2017 at 23:59.
+We will clone all your repositories using a script,
+so make sure that @saucisson and @mencattini have read access.
+
+Evaluation will be:
+
+* do you have done anything at the deadline?
+  (yes: 1 point, no: 0 point)
   * [ ] Done anything
-* Do you have understood and implemented all the required notions?
-  (yes: 4 points for all, no: 2 points for none)
-  * [ ] algorithm #1
-  * [ ] algorithm #2
-  * [ ] ...
-* Do you have understood and implemented corners cases of all the required
+* do you have understood and implemented all the required notions?
+  (all: 3 points, none: 0 point)
+  * [ ] Reachability graph
+  * [ ] Coverability graph
+* do you have understood and implemented corners cases of all the required
   notions?
-  (yes: +2 point for all)
-  * [ ] algorithm #1
-  * [ ] algorithm #2
-  * [ ] ...
-* Do you have correctly written and tested your code?
+  (all: +2 points, none: 0 point)
+  * [ ] Reachability graph
+  * [ ] Coverability graph
+* do you have correctly written and tested your code?
   (no: -0.5 point for each)
   * [ ] Coding standards
   * [ ] Tests
   * [ ] Code coverage
 
-| TP  | Grade |
-| --- |------ |
-|     |       |
+| Grade |
+| ----- |
+|       |
