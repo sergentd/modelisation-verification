@@ -120,6 +120,10 @@ by running frequently:
 ### Homework #1
 
 The source files are located within: `homework/petrinets/`.
+You have to write code where `TODO` are located.
+Do **not** touch the existing code or tests,
+but you can add your own tests in addition.
+
 The deadline is 11 october 2017 at 23:59.
 We will clone all your repositories using a script,
 so make sure that @saucisson and @mencattini have read access.
