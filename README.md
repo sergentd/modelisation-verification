@@ -41,7 +41,7 @@ You also have to:
 * [Clone the course repository](https://help.github.com/articles/cloning-a-repository/)
 
   ```sh
-  git clone --bare https://github.com/cui-unige/modelisation-verification.git
+  git clone https://github.com/cui-unige/modelisation-verification.git
   ```
 
 * [Duplicate the course repository into your private one](https://help.github.com/articles/duplicating-a-repository/)
@@ -90,7 +90,7 @@ by running frequently:
 
 ```sh
   git fetch upstream
-  git merge upstream master
+  git merge upstream/master
 ```
 
 ## Rules
