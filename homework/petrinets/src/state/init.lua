@@ -22,10 +22,13 @@ function State.__call (state, transition)
     --return nil, "transition is not enabled"
   --end
   local pre  = {}
-  for k, v in pairs(transition:post()) do
-    table.insert(pre,{k, v})
+  for _,arc in transition:pre() do
+    pre[arc.place] = arc.valuation
   end
-  local post = Fun.map (function (_,arc) return arc.place, arc.valuation end, transition:post())
+  local post = {}
+  for _,arc in transition:post() do
+    pre[arc.place] = arc.valuation
+  end
   return setmetatable ({
     petrinet   = state.petrinet,
     marking    = state.marking - pre + post,
@@ -35,16 +38,19 @@ end
 
 function State.enabled (state)
   assert (getmetatable (state) == State)
-  local transitions = state.petrinet:transitions ()
-  for k, v in pairs (transitions) do
-    print (k, v, transitions[k])
+  local transitions = {}
+  for key,value in state.petrinet:transitions() do
+    local enabled = true
+    for _,arc in pairs(value) do
+      if not enabled or (arc.type == "pre" and (arc.place.marking < arc.valuation)) then
+        enabled = false
+      end
+    end
+    if enabled then
+      transitions[key] = enabled
+    end
   end
-
-  return Fun.map (function (_, transition)
-    return transition
-  end, Fun.filter (function (_, arc)
-    return (getmetatable (arc) == Petrinet.Arc and (arc.valuation <= arc.place.marking))
-  end, state.petrinet:transitions ()))
+  return transitions
 end
 
 local function sort (lhs, rhs)
