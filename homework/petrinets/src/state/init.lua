@@ -18,16 +18,28 @@ end
 function State.__call (state, transition)
   assert (getmetatable (state) == State)
   assert (getmetatable (transition) == Petrinet.Transition)
-  --if (true) then -- TODO: transition is not fireable
-    --return nil, "transition is not enabled"
-  --end
+  local fireable = false
+  for k in pairs(state:enabled()) do
+    if k == transition then
+      --print (k, transition)
+      fireable = true
+    end
+  end
+  for k, arc in pairs(transition) do
+    print(state, arc.type, arc.place.marking, arc.valuation)
+  end
+  print('YOLOOOO')
+  if (not fireable) then
+    print('Perdu')
+    return nil, "transition is not enabled"
+  end
   local pre  = {}
   for _,arc in transition:pre() do
     pre[arc.place] = arc.valuation
   end
   local post = {}
   for _,arc in transition:post() do
-    pre[arc.place] = arc.valuation
+    post[arc.place] = arc.valuation
   end
   return setmetatable ({
     petrinet   = state.petrinet,
@@ -42,12 +54,12 @@ function State.enabled (state)
   for key,value in state.petrinet:transitions() do
     local enabled = true
     for _,arc in pairs(value) do
-      if not enabled or (arc.type == "pre" and (arc.place.marking < arc.valuation)) then
+      if (arc.type == "pre" and (arc.place.marking < arc.valuation)) then
         enabled = false
       end
     end
     if enabled then
-      transitions[key] = enabled
+      transitions[value] = enabled
     end
   end
   return transitions
