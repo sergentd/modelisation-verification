@@ -16,29 +16,23 @@ function State.create (petrinet)
 end
 
 function State.__call (state, transition)
-  assert (getmetatable (state) == State)
+  assert (getmetatable (state)      == State)
   assert (getmetatable (transition) == Petrinet.Transition)
-  if (Fun.all (function (arc)
-  return assert (getmetatable (arc) == Petrinet.Arc)
-     and assert (type (arc.place.marking) == "number" and arc.place.marking >= 0)
-     and assert (type (arc.valuation) == "number" and arc.valuation >= 0)
-     and arc.place.marking < arc.valuation
-  end,   transition:pre ())) then
-    return nil, "transition is not enabled"
+  local transitions = Fun.tomap (state:enabled ())
+  if transitions[transition] == nil then
+    return nil, "transition not enabled"
   end
   local pre  = {}
-  for _,arc in transition:pre() do
-    pre[arc.place] = arc.valuation
-  end
+  for _,arc in transition:pre () do pre[arc.place] = arc.valuation end
   local post = {}
-  for _,arc in transition:post() do
-    post[arc.place] = arc.valuation
-  end
-  return setmetatable ({
+  for _,arc in transition:post () do post[arc.place] = arc.valuation end
+  local temp = setmetatable ({
     petrinet   = state.petrinet,
     marking    = state.marking - pre + post,
     successors = {},
   }, State)
+  print(temp)
+  return temp
 end
 
 function State.enabled (state)
@@ -47,16 +41,16 @@ function State.enabled (state)
   for _,transition in state.petrinet:transitions () do
     assert (getmetatable (transition) == Petrinet.Transition)
     local enabled = Fun.all (function (arc)
-    return assert (getmetatable (arc) == Petrinet.Arc)
-       and assert (type (arc.place.marking) == "number" and arc.place.marking >= 0)
-       and assert (type (arc.valuation) == "number" and arc.valuation >= 0)
-       and arc.place.marking >= arc.valuation
+      return assert (getmetatable (arc) == Petrinet.Arc)
+         and assert (type (arc.valuation) == "number" and arc.valuation >= 0)
+         and assert (type (arc.place.marking) == "number" and arc.place.marking >= 0)
+         and state.marking[arc.place] >= arc.valuation
     end,   transition:pre ())
     if enabled then
-      table.insert(transitions, transition)
+      transitions[transition] = transition
     end
   end
-  return Fun.iter(transitions)
+  return Fun.iter (transitions)
 end
 
 local function sort (lhs, rhs)
