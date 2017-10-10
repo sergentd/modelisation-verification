@@ -18,16 +18,12 @@ end
 function State.__call (state, transition)
   assert (getmetatable (state) == State)
   assert (getmetatable (transition) == Petrinet.Transition)
-  local fireable = false
-  for _,v in pairs(state:enabled()) do
-    if v == transition then
-      fireable = true
-    end
-  end
-  --for k, arc in pairs(transition) do
-    --print(state, arc.type, arc.place.marking, arc.valuation)
-  --end
-  if (not fireable) then
+  if (Fun.all (function (arc)
+  return assert (getmetatable (arc) == Petrinet.Arc)
+     and assert (type (arc.place.marking) == "number" and arc.place.marking >= 0)
+     and assert (type (arc.valuation) == "number" and arc.valuation >= 0)
+     and arc.place.marking < arc.valuation
+  end,   transition:pre ())) then
     return nil, "transition is not enabled"
   end
   local pre  = {}
@@ -48,19 +44,19 @@ end
 function State.enabled (state)
   assert (getmetatable (state) == State)
   local transitions = {}
-  for _,transition in state.petrinet:transitions() do
-    local fireable = true
-    for _,arc in pairs(transition) do
-      if (arc.place.marking < arc.valuation) and arc.type == 'pre' then
-        fireable = false
-        break
-      end
-    end
-    if fireable then
-      transitions[transition] = transition
+  for _,transition in state.petrinet:transitions () do
+    assert (getmetatable (transition) == Petrinet.Transition)
+    local enabled = Fun.all (function (arc)
+    return assert (getmetatable (arc) == Petrinet.Arc)
+       and assert (type (arc.place.marking) == "number" and arc.place.marking >= 0)
+       and assert (type (arc.valuation) == "number" and arc.valuation >= 0)
+       and arc.place.marking >= arc.valuation
+    end,   transition:pre ())
+    if enabled then
+      table.insert(transitions, transition)
     end
   end
-  return transitions
+  return Fun.iter(transitions)
 end
 
 local function sort (lhs, rhs)
