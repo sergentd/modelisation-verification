@@ -14,7 +14,7 @@ function Coverability.create (t)
     traversal = t.traversal,
     omegize   = function (state)
         if state.current.marking >= state.parent.marking then
-          Fun.each(function(place)
+          Fun.each (function(place)
             if (type (state.current.marking[place]) == "number"
            and state.current.marking[place] >  state.parent.marking[place])
             or state.current.marking[place] == Marking.omega then
@@ -22,7 +22,7 @@ function Coverability.create (t)
            end
         end, state.current.petrinet:places ())
       end
-    end,
+    end
   }
 end
 
