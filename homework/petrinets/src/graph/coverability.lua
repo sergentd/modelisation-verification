@@ -13,10 +13,15 @@ function Coverability.create (t)
   return Graph.create {
     traversal = t.traversal,
     omegize   = function (state)
-        if state.current <= state.parent then
-          print('ok')
-        end
-        --print(state.current, state.initial, state.parent, state.states)
+        if state.current.marking >= state.parent.marking then
+          Fun.each(function(place)
+            if (type (state.current.marking[place]) == "number"
+           and state.current.marking[place] >  state.parent.marking[place])
+            or state.current.marking[place] == Marking.omega then
+               state.current.marking[place] =  Marking.omega
+           end
+        end, state.current.petrinet:places ())
+      end
     end,
   }
 end
