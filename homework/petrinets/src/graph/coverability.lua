@@ -20,10 +20,10 @@ function Coverability.create (t)
             or (type (x.current.marking[place]) ~= "number"
                 and   x.current.marking[place]  ~= Marking.omega)
             then
-              x.current.marking[place] =  Marking.omega
-           end
-        end, x.current.petrinet:places ())
-      end
+              x.current.marking[place] = Marking.omega
+            end
+          end, x.current.petrinet:places ())
+        end
     end
   }
 end
