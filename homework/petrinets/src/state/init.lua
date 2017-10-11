@@ -26,13 +26,11 @@ function State.__call (state, transition)
   for _,arc in transition:pre () do pre[arc.place] = arc.valuation end
   local post = {}
   for _,arc in transition:post () do post[arc.place] = arc.valuation end
-  local temp = setmetatable ({
+  return setmetatable ({
     petrinet   = state.petrinet,
     marking    = state.marking - pre + post,
     successors = {},
   }, State)
-  print(temp)
-  return temp
 end
 
 function State.enabled (state)

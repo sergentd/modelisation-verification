@@ -12,9 +12,11 @@ function Coverability.create (t)
   assert (type (t.traversal) == "function")
   return Graph.create {
     traversal = t.traversal,
-    omegize   = function (x)
-      -- TODO: replace marking by omega if needed
-      -- look at graph/init.lua to understand what data are given in `x`
+    omegize   = function (state)
+        if state.current <= state.parent then
+          print('ok')
+        end
+        --print(state.current, state.initial, state.parent, state.states)
     end,
   }
 end
