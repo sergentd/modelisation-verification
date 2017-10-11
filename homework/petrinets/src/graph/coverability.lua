@@ -12,15 +12,17 @@ function Coverability.create (t)
   assert (type (t.traversal) == "function")
   return Graph.create {
     traversal = t.traversal,
-    omegize   = function (state)
-        if state.current.marking >= state.parent.marking then
+    omegize   = function (x) -- TODO
+        if x.parent.marking <= x.current.marking then
           Fun.each (function(place)
-            if (type (state.current.marking[place]) == "number"
-           and state.current.marking[place] >  state.parent.marking[place])
-            or state.current.marking[place] == Marking.omega then
-               state.current.marking[place] =  Marking.omega
+            if (type (x.current.marking[place]) == "number"
+                and   x.current.marking[place]  >  x.parent.marking[place])
+            or (type (x.current.marking[place]) ~= "number"
+                and   x.current.marking[place]  ~= Marking.omega)
+            then
+              x.current.marking[place] =  Marking.omega
            end
-        end, state.current.petrinet:places ())
+        end, x.current.petrinet:places ())
       end
     end
   }

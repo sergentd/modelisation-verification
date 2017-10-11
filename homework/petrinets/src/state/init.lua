@@ -22,10 +22,10 @@ function State.__call (state, transition)
   if transitions[transition] == nil then
     return nil, "transition not enabled"
   end
-  local pre  = {}
-  for _,arc in transition:pre  () do  pre[arc.place] = arc.valuation end
-  local post = {}
-  for _,arc in transition:post () do post[arc.place] = arc.valuation end
+  local pre  = {} -- TODO
+  for _,arc in transition:pre  () do  pre [arc.place] = arc.valuation end
+  local post = {} -- TODO
+  for _,arc in transition:post () do post [arc.place] = arc.valuation end
   return setmetatable ({
     petrinet   = state.petrinet,
     marking    = state.marking - pre + post,
@@ -34,7 +34,7 @@ function State.__call (state, transition)
 end
 
 function State.enabled (state)
-  assert (getmetatable (state) == State)
+  assert (getmetatable (state) == State) -- TODO
   local transitions = {}
   for _,transition in state.petrinet:transitions () do
     assert (getmetatable (transition) == Petrinet.Transition)
@@ -42,8 +42,9 @@ function State.enabled (state)
       return assert (getmetatable (arc) == Petrinet.Arc)
          and assert (type (arc.valuation)      == "number" and arc.valuation >= 0)
          and assert (type (arc.place.marking)  == "number" and arc.place.marking >= 0)
-         and ((type (state.marking[arc.place]) == "number" and state.marking[arc.place] >= arc.valuation)
-          or state.marking[arc.place]          == Marking.omega)
+         and ((type (state.marking[arc.place]) == "number"
+                and  state.marking[arc.place]  >= arc.valuation)
+              or state.marking[arc.place] == Marking.omega)
     end,   transition:pre ())
     if enabled then
       transitions[transition] = transition
