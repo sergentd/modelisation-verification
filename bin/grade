@@ -1,0 +1,110 @@
+#! /usr/bin/env bash
+
+homeworks="${*:-$(ls homework/)}"
+students=$(cat STUDENTS)
+output="$(pwd)/grades.txt"
+
+mkdir -p "repositories"
+for student in ${students}
+do
+  if [ -d "repositories/${student}" ]
+  then
+    echo -n "Updating ${student}... "
+    (
+      cd "repositories/${student}"
+      git pull
+      cd ../..
+    ) > /dev/null 2> /dev/null \
+    && echo "ok" \
+    || echo "failure"
+
+  else
+    echo -n "Cloning ${student}... "
+    git clone "git@github.com:${student}/modelisation-verification.git" "repositories/${student}" \
+      > /dev/null 2> /dev/null \
+      && echo "ok" \
+      || echo "failure"
+  fi
+done
+
+ulimit -t 10
+
+for homework in ${homeworks}
+do
+  echo "=================================================="
+  echo "=================================================="
+  echo "===== ${homework} ====="
+  echo "=================================================="
+  echo "=================================================="
+
+  cd "homework/${homework}"
+  tests=$(find src -name "*_spec.lua")
+  cd "../.."
+
+  for student in ${students}
+  do
+    if [ -d "repositories/${student}" ]
+    then
+      for test in ${tests}
+      do
+        echo -n "Reinstalling ${test} in ${student}... "
+        cp "homework/${homework}/${test}" "repositories/${student}/homework/${homework}/${test}" \
+          2> /dev/null \
+          && echo "ok" \
+          || echo "failure"
+      done
+    fi
+  done
+
+  for student in ${students}
+  do
+    if [ -d "repositories/${student}" ]
+    then
+      (
+        cd "repositories/${student}/homework/${homework}"
+        echo "${student}"
+        rm -f "grade.txt"
+        developers=$(git log --format='%aN' | sort -u | tr '\n' ' ')
+        echo "  developers: ${developers}"
+        if luacheck --std=max+busted "src/" >> "grade.txt"
+        then
+          echo "  check: ok"
+        else
+          echo "  check: ko"
+        fi
+        rm -f "luacov.stats.out"
+        if busted --coverage "src/" >> "grade.txt" 2> "grade.txt"
+        then
+          echo "  tests: ok with $(cat "grade.txt" | grep "success" | grep "failure" | grep "pending")"
+        else
+          echo "  tests: ko with $(cat "grade.txt" | grep "success" | grep "failure" | grep "pending")"
+        fi
+        correct=0
+        total=0
+        for test in ${tests}
+        do
+          tempfile=$(mktemp)
+          if busted --coverage "${test}" >> "${tempfile}"
+          then
+            echo "    ${test}: ok with $(cat "${tempfile}" | grep "success" | grep "failure" | grep "pending")"
+            correct=$(expr ${correct} + 1)
+          else
+            echo "    ${test}: ko with $(cat "${tempfile}" | grep "success" | grep "failure" | grep "pending")"
+          fi
+          total=$(expr ${total} + 1)
+          rm -f "${tempfile}"
+        done
+        echo "  correct: ${correct}"
+        echo "  total: ${total}"
+        luacov "luacov.stats.out" >> "grade.txt"
+        for x in $(tail -n 1 luacov.report.out)
+        do
+          coverage=${x}
+        done
+        echo "  coverage: ${x}"
+      )
+    else
+      echo "${student}: nothing"
+    fi
+  done
+done
