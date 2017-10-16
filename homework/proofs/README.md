@@ -20,8 +20,7 @@ You have to complete programs to check proofs on ADTs:
 
 * write axioms for all operations in `adt/boolean.lua`;
 * write axioms for all operations in `adt/natural.lua`;
-* complete theorem generators in `adt/theorem.lua`;
-* write the proof of `x+y = y+x` in `adt/theorem_spec.lua`.
+* complete code in `adt/init.lua`.
 
 You must only implement parts shown by `TODO` comments in the source code.
 Do **not** touch other algorithms.
@@ -31,9 +30,7 @@ At the beginning, you already have:
 
 * a representation for Algebraic Abstract Data Types (with tests);
 * a representation for conjectures and theorems;
-* parts of the Boolean and Natural data types;
-* some theorem generators;
-* some example proofs.
+* parts of the Boolean and Natural data types.
 
 ## Comments on Code
 
@@ -289,42 +286,3 @@ Two proofs are given as examples in the tests of theorems.
   ```
   $ busted --tags=test src/
   ```
-
-## Rules
-
-* We use [GitHub Classroom](https://classroom.github.com) for the homework.
-* Ask your questions using GitHub issues in your repository.
-* If for any reason you have trouble with the deadline,
-  contact your teacher as soon as possible.
-* Your source code (and tests) must pass all checks of `luacheck`
-  without warnings or errors.
-* Your tests must cover at least 80% of the source code (excluding test files).
-* Your work will be tested in a dedicated environment, using `wercker`.
-  You can always run all the tests on your code with the following command,
-  from the root of your project (where the `wercker.yml` file is located):
-
-  ```
-  $ wercker build
-  ```
-
-## Evaluation
-
-Evaluation follows the questions:
-
-* do you have done anything at the deadline?
-  (no: 0 points)
-  * [ ] Done anything
-* do you have understood and implemented all the required notions?
-  (yes: 4 points for all, no: 2 points for none)
-* do you have understood and implemented corners cases of all the required
-  notions?
-  (yes: +2 point for all)
-* do you have correctly written and tested your code?
-  (no: -0.5 point for each)
-  * [ ] Coding standards
-  * [ ] Tests
-  * [ ] Code coverage
-
-| Grade |
-| ----- |
-|       |
