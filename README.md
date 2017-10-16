@@ -185,11 +185,13 @@ Evaluation will be:
   (all: 3 points, none: 0 point)
   * [ ] Term Equivalence
   * [ ] Substitution of Variables
+  * [ ] Boolean and Natural ADTs
 * do you have understood and implemented corners cases of all the required
   notions?
   (all: +2 points, none: 0 point)
   * [ ] Term Equivalence
   * [ ] Substitution of Variables
+  * [ ] Boolean and Natural ADTs
 * do you have correctly written and tested your code?
   (no: -0.5 point for each)
   * [ ] Coding standards
