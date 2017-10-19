@@ -41,7 +41,7 @@ You also have to:
 * [Clone the course repository](https://help.github.com/articles/cloning-a-repository/)
 
   ```sh
-  git clone https://github.com/cui-unige/modelisation-verification.git
+  git clone --bare https://github.com/cui-unige/modelisation-verification.git
   ```
 
 * [Duplicate the course repository into your private one](https://help.github.com/articles/duplicating-a-repository/)
@@ -90,7 +90,7 @@ by running frequently:
 
 ```sh
   git fetch upstream
-  git merge upstream/master
+  git merge upstream master
 ```
 
 ## Rules
@@ -138,22 +138,22 @@ Evaluation will be:
 
 * do you have done anything at the deadline?
   (yes: 1 point, no: 0 point)
-  * [ ] Done anything
+  * [x] Done anything
 * do you have understood and implemented all the required notions?
   (all: 3 points, none: 0 point)
-  * [ ] Reachability graph
-  * [ ] Coverability graph
+  * [x] Reachability graph
+  * [x] Coverability graph
 * do you have understood and implemented corners cases of all the required
   notions?
   (all: +2 points, none: 0 point)
-  * [ ] Reachability graph
-  * [ ] Coverability graph
+  * [x] Reachability graph
+  * [x] Coverability graph
 * do you have correctly written and tested your code?
   (no: -0.5 point for each)
   * [ ] Coding standards
-  * [ ] Tests
+  * [x] Tests
   * [ ] Code coverage
 
 | Grade |
 | ----- |
-|       |
+|     5.5  |
