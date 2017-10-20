@@ -167,7 +167,7 @@ function Term.equivalence (lhs, rhs)
   end
   local variables = {}
   local function compare (l, r)
-    -- TODO
+    return variables
   end
   return compare (lhs, rhs), variables
 end
