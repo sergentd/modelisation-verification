@@ -167,7 +167,45 @@ function Term.equivalence (lhs, rhs)
   end
   local variables = {}
   local function compare (l, r)
-    return variables
+  --TODO
+    if getmetatable (l) == Variable
+   and getmetatable (r) == Variable then
+      if variables [l] and (variables [l] ~= r)
+      or variables [r] and (variables [r] ~= l) then
+        return false
+      else
+        variables [l] = r
+        variables [r] = l
+        return true
+      end
+    elseif getmetatable (l) == Term
+       and getmetatable (r) == Variable then
+         if variables [r] and (variables [r] ~= l) then
+           return false
+         else
+           variables [r] = l
+           return true
+         end
+    elseif getmetatable (l) == Variable
+       and getmetatable (r) == Term then
+         if variables [l] and (variables [l] ~= r) then
+           return false
+         else
+           variables [l] = r
+           return true
+         end
+
+    elseif getmetatable (l) == Term
+       and getmetatable (r) == Term then
+         if l[Operation] == r[Operation] then
+           return Fun.frommap (l [Operation])
+                 : filter (function (k) return type (k) ~= "table" end)
+                 : all (function (k) return compare (l [k], r [k]) end)
+         else
+           return false
+         end
+
+    end
   end
   return compare (lhs, rhs), variables
 end
@@ -184,6 +222,16 @@ function Term.__div (term, mapping)
   end)
   local function rename (t)
     -- TODO
+    local result
+    if getmetatable(t) == Variable then
+      result = mapping [t] or t
+    else
+      result = t [Operation] (Fun.frommap (t)
+            : filter (function (k,_) return type (k) ~= "table" end)
+            : map    (function (k,v) return k, rename(v) end)
+            : tomap  ())
+    end
+    return result
   end
   return rename (term)
 end

@@ -22,7 +22,11 @@ Natural [Adt.axioms].increment = Adt.axiom {
   Natural.Increment { Natural._v },
   Natural.Successor { Natural._v },
 }
-Natural [Adt.axioms].decrement = Adt.axiom {
+Natural [Adt.axioms].decrement_zero = Adt.axiom {
+  Natural.Decrement { Natural.Zero {} },
+  Natural.Zero {}
+}
+Natural [Adt.axioms].decrement_nonzero = Adt.axiom {
   Natural.Decrement { Natural.Successor{ Natural._x } },
   Natural._x
 }
@@ -39,8 +43,16 @@ Natural [Adt.axioms].subtraction_zero = Adt.axiom {
   Natural._x
 }
 Natural [Adt.axioms].subtraction_nonzero = Adt.axiom {
-  Natural.Subtraction { Natural._x, Natural.Successor { Natural._y } },
-  Natural._x
+  Natural.Subtraction { Natural._x, Natural.Decrement { Natural._y } },
+  Natural.Decrement { Natural.Subtraction { Natural._x, Natural._y } }
+}
+Boolean [Adt.axioms].is_even_zero = Adt.axiom {
+  Boolean.Is_even { Natural.Zero {} },
+  Boolean.True {}
+}
+Boolean [Adt.axioms].is_even_nonzero = Adt.axiom {
+  Boolean.Is_even { Natural._x },
+  Boolean.Not { Boolean.Is_even { Natural.Decrement { Natural._x } } }
 }
 
 return Natural
