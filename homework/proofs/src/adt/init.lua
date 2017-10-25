@@ -168,19 +168,28 @@ function Term.equivalence (lhs, rhs)
   local variables = {}
   local function compare (l, r)
   --TODO
-    if getmetatable (l) == Variable
-   and getmetatable (r) == Variable then
-      if variables [l] and (variables [l] ~= r)
-      or variables [r] and (variables [r] ~= l) then
-        return false
+    if  getmetatable (l) == Term
+    and getmetatable (r) == Term then
+      if l[Operation] == r[Operation] then
+        return Fun.frommap (l [Operation])
+              : filter (function (k) return type (k) ~= "table" end)
+              : all (function (k) return compare (l [k], r [k]) end)
       else
-        variables [l] = r
-        variables [r] = l
-        return true
+        return false
       end
+    elseif getmetatable (l) == Variable
+       and getmetatable (r) == Variable then
+         if (variables [l] ~= r) and variables [l]
+         or (variables [r] ~= l) and variables [r] then
+           return false
+         else
+           variables [l] = r
+           variables [r] = l
+           return true
+         end
     elseif getmetatable (l) == Term
        and getmetatable (r) == Variable then
-         if variables [r] and (variables [r] ~= l) then
+         if (variables [r] ~= l) and variables [r] then
            return false
          else
            variables [r] = l
@@ -188,23 +197,12 @@ function Term.equivalence (lhs, rhs)
          end
     elseif getmetatable (l) == Variable
        and getmetatable (r) == Term then
-         if variables [l] and (variables [l] ~= r) then
+         if (variables [l] ~= r) and variables [l] then
            return false
          else
            variables [l] = r
            return true
          end
-
-    elseif getmetatable (l) == Term
-       and getmetatable (r) == Term then
-         if l[Operation] == r[Operation] then
-           return Fun.frommap (l [Operation])
-                 : filter (function (k) return type (k) ~= "table" end)
-                 : all (function (k) return compare (l [k], r [k]) end)
-         else
-           return false
-         end
-
     end
   end
   return compare (lhs, rhs), variables
