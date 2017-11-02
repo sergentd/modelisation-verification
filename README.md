@@ -156,8 +156,8 @@ Evaluation will be:
 
 | Grade |
 | ----- |
-<<<<<<< HEAD
-|       |
+|  5.5 |
+
 
 ### Homework #2
 
@@ -181,17 +181,17 @@ Evaluation will be:
 
 * do you have done anything at the deadline?
   (yes: 1 point, no: 0 point)
-  * [ ] Done anything
+  * [x] Done anything
 * do you have understood and implemented all the required notions?
   (all: 3 points, none: 0 point)
-  * [ ] Term Equivalence
-  * [ ] Substitution of Variables
-  * [ ] Boolean and Natural ADTs
+  * [x] Term Equivalence
+  * [x] Substitution of Variables
+  * [x] Boolean and Natural ADTs
 * do you have understood and implemented corners cases of all the required
   notions?
   (all: +2 points, none: 0 point)
-  * [ ] Term Equivalence
-  * [ ] Substitution of Variables
+  * [x] Term Equivalence
+  * [x] Substitution of Variables
   * [ ] Boolean and Natural ADTs
 * do you have correctly written and tested your code?
   (no: -0.5 point for each)
@@ -201,8 +201,7 @@ Evaluation will be:
 
 | Grade |
 | ----- |
-|       |
-=======
-|     5.5  |
+|  5.75 |
+
 Auto-eval TP2 : 5.0
->>>>>>> 7dec0dac0edfc9a296d25c19b4de4708228367e3
+
