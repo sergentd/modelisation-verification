@@ -32,12 +32,12 @@ Natural [Adt.axioms].decrement = Adt.axiom {
 
 -- Addition
 
-Natural [Adt.axioms].x_addition_zero = Adt.axiom {
+Natural [Adt.axioms].addition_zero = Adt.axiom {
   Natural.Addition { Natural._x, Natural.Zero {} },
   Natural._x,
 }
 
-Natural [Adt.axioms].x_addition_sy = Adt.axiom {
+Natural [Adt.axioms].addition_nonzero = Adt.axiom {
   Natural.Addition  { Natural._x, Natural.Successor { Natural._y } },
   Natural.Successor { Natural.Addition { Natural._x, Natural._y } },
 }
