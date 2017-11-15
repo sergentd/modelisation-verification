@@ -216,6 +216,12 @@ function Theorem.substitutivity (operation, operands)
                       tostring (k) .. " must be a theorem")
             end)
   -- TODO
+  local variables = {}
+  Fun.frommap (operands)
+    : each (function (_,v) all_variables (v, variables) end)
+  local  lhs = operands [1][1]
+  local  rhs = operands [1][2]
+  local when = lhs.when and rhs.when
   return Theorem {
     variables = variables,
     when = when,
@@ -234,6 +240,13 @@ function Theorem.substitution (theorem, variable, replacement)
   assert (variable [Adt.Sort] == replacement [Adt.Sort],
           "variable and replacement must be of the same sort")
   -- TODO
+  local lhs = theorem [1]
+  local rhs = theorem [2]
+  local mapping = {}
+  mapping [variable] = replacement
+  lhs = lhs / mapping
+  rhs = rhs / mapping
+  local when = lhs.when and rhs.when
   return Theorem {
     variables = all_variables (theorem),
     when = when,
@@ -248,6 +261,35 @@ function Theorem.cut (theorem, replacement)
   assert (getmetatable (replacement) == Theorem,
           "replacement must be a theorem")
   -- TODO
+  if not theorem.when then
+    return nil
+  end
+  local search = Boolean.Equals {
+    replacement [1],
+    replacement [2]
+  }
+  local replaced = false
+  local function replace(term)
+    if getmetatable (term) == Adt.Variable then
+      return term
+    end
+    local equiv, map = Adt.Term.Equivalence (term, search)
+    if equiv then
+      replaced = true
+      return replacement.when
+         and replacement.when / map
+          or Boolean.True {}
+    else
+      return term [Adt.Operation] (Fun.frommap (term)
+        : filter (function (k, _) return type (k) ~= "table" end)
+        : map    (function (k, t) return k, replace (t) end)
+        : tomap ())
+    end
+  end
+  local result = replace (theorem.when)
+  if not replaced then
+    return nil
+  end
   return Theorem {
     variables = all_variables (theorem),
     when = result,
