@@ -1,826 +1,826 @@
 ==============================================================================
 ./src/adt/boolean.lua
 ==============================================================================
-    6 local Adt     = require "adt"
-    6 local Boolean = Adt.Sort "bool"
+   16 local Adt     = require "adt"
+   16 local Boolean = Adt.Sort "bool"
 
-    6 Boolean.True    = {}
-    6 Boolean.False   = {}
-    6 Boolean.Equals  = { Boolean, Boolean }
-    6 Boolean.Not     = { Boolean }
-    6 Boolean.And     = { Boolean, Boolean }
-    6 Boolean.Or      = { Boolean, Boolean }
-    6 Boolean.Xor     = { Boolean, Boolean }
-    6 Boolean.Implies = { Boolean, Boolean }
+   16 Boolean.True    = {}
+   16 Boolean.False   = {}
+   16 Boolean.Equals  = { Boolean, Boolean }
+   16 Boolean.Not     = { Boolean }
+   16 Boolean.And     = { Boolean, Boolean }
+   16 Boolean.Or      = { Boolean, Boolean }
+   16 Boolean.Xor     = { Boolean, Boolean }
+   16 Boolean.Implies = { Boolean, Boolean }
 
-    6 Boolean.generators { Boolean.True, Boolean.False }
+   16 Boolean.generators { Boolean.True, Boolean.False }
 
       -- Equals
-   12 Boolean [Adt.axioms].true_equals_true = Adt.axiom {
-    6   Boolean.Equals { Boolean.True {}, Boolean.True {} },
-    6   Boolean.True {},
-   12 }
+   32 Boolean [Adt.axioms].true_equals_true = Adt.axiom {
+   16   Boolean.Equals { Boolean.True {}, Boolean.True {} },
+   16   Boolean.True {},
+   32 }
 
-   10 Boolean [Adt.axioms].true_equals_false = Adt.axiom {
-    6   Boolean.Equals { Boolean.True {}, Boolean.False {} },
-    8   Boolean.False {},
-    8 }
+   32 Boolean [Adt.axioms].true_equals_false = Adt.axiom {
+   16   Boolean.Equals { Boolean.True {}, Boolean.False {} },
+   16   Boolean.False {},
+   32 }
 
-    8 Boolean [Adt.axioms].false_equals_true = Adt.axiom {
-    4   Boolean.Equals { Boolean.False {}, Boolean.True {} },
-    8   Boolean.False {},
-   10 }
+   32 Boolean [Adt.axioms].false_equals_true = Adt.axiom {
+   16   Boolean.Equals { Boolean.False {}, Boolean.True {} },
+   16   Boolean.False {},
+   32 }
 
-   12 Boolean [Adt.axioms].false_equals_false = Adt.axiom {
-    8   Boolean.Equals { Boolean.False {}, Boolean.False {} },
-    6   Boolean.True {},
-   10 }
+   32 Boolean [Adt.axioms].false_equals_false = Adt.axiom {
+   16   Boolean.Equals { Boolean.False {}, Boolean.False {} },
+   16   Boolean.True {},
+   32 }
 
       -- Not
-   10 Boolean [Adt.axioms].not_true = Adt.axiom {
-    6   Boolean.Not { Boolean.True {} },
-    8   Boolean.False {}
-    8 }
-    8 Boolean [Adt.axioms].not_false = Adt.axiom {
-    8   Boolean.Not { Boolean.False {} },
-    6   Boolean.True {}
-    8 }
+   32 Boolean [Adt.axioms].not_true = Adt.axiom {
+   16   Boolean.Not { Boolean.True {} },
+   16   Boolean.False {}
+   32 }
+   32 Boolean [Adt.axioms].not_false = Adt.axiom {
+   16   Boolean.Not { Boolean.False {} },
+   16   Boolean.True {}
+   32 }
 
       -- And
-   10 Boolean [Adt.axioms].x_and_y = Adt.axiom {
-    6   Boolean.And { Boolean._x, Boolean._y },
-    8   Boolean.And { Boolean._y, Boolean._x },
-   12 }
+   32 Boolean [Adt.axioms].x_and_y = Adt.axiom {
+   16   Boolean.And { Boolean._x, Boolean._y },
+   16   Boolean.And { Boolean._y, Boolean._x },
+   32 }
 
-   10 Boolean [Adt.axioms].true_and_v = Adt.axiom {
-    8   Boolean.And { Boolean.True {}, Boolean._v },
+   32 Boolean [Adt.axioms].true_and_v = Adt.axiom {
+   16   Boolean.And { Boolean.True {}, Boolean._v },
         Boolean._v,
-    8 }
+   32 }
 
-   10 Boolean [Adt.axioms].false_and_v = Adt.axiom {
-    6   Boolean.And { Boolean.False {}, Boolean._v },
-    8   Boolean.False {},
-   12 }
+   32 Boolean [Adt.axioms].false_and_v = Adt.axiom {
+   16   Boolean.And { Boolean.False {}, Boolean._v },
+   16   Boolean.False {},
+   32 }
 
       -- Or
-   12 Boolean [Adt.axioms].x_or_y = Adt.axiom {
-    8   Boolean.Or { Boolean._x, Boolean._y },
-    6   Boolean.Or { Boolean._y, Boolean._x },
-   10 }
+   32 Boolean [Adt.axioms].x_or_y = Adt.axiom {
+   16   Boolean.Or { Boolean._x, Boolean._y },
+   16   Boolean.Or { Boolean._y, Boolean._x },
+   32 }
 
-    8 Boolean [Adt.axioms].true_or_v = Adt.axiom {
-    4   Boolean.Or { Boolean.True {}, Boolean._v },
-    8   Boolean.True {},
-   10 }
+   32 Boolean [Adt.axioms].true_or_v = Adt.axiom {
+   16   Boolean.Or { Boolean.True {}, Boolean._v },
+   16   Boolean.True {},
+   32 }
 
-   12 Boolean [Adt.axioms].false_or_v = Adt.axiom {
-    8   Boolean.Or { Boolean.False {}, Boolean._v },
+   32 Boolean [Adt.axioms].false_or_v = Adt.axiom {
+   16   Boolean.Or { Boolean.False {}, Boolean._v },
         Boolean._v,
-    8 }
+   32 }
 
       -- Xor
-   10 Boolean [Adt.axioms].x_xor_y = Adt.axiom {
-    6   Boolean.Xor { Boolean._x, Boolean._y },
-   12   Boolean.And { Boolean.Or { Boolean._x, Boolean._y },
-    4                 Boolean.Not { Boolean.And { Boolean._x, Boolean._y } } },
-    8 }
+   32 Boolean [Adt.axioms].x_xor_y = Adt.axiom {
+   16   Boolean.Xor { Boolean._x, Boolean._y },
+   32   Boolean.And { Boolean.Or { Boolean._x, Boolean._y },
+   16                 Boolean.Not { Boolean.And { Boolean._x, Boolean._y } } },
+   32 }
 
       -- Implies
-    8 Boolean [Adt.axioms].true_implies_true = Adt.axiom {
-    4   Boolean.Implies { Boolean.True {}, Boolean.True {} },
-    4   Boolean.True {},
-    8 }
+   32 Boolean [Adt.axioms].true_implies_true = Adt.axiom {
+   16   Boolean.Implies { Boolean.True {}, Boolean.True {} },
+   16   Boolean.True {},
+   32 }
 
-    8 Boolean [Adt.axioms].true_implies_false = Adt.axiom {
-    4   Boolean.Implies { Boolean.True {}, Boolean.False {} },
-    4   Boolean.False {}
-    8 }
+   32 Boolean [Adt.axioms].true_implies_false = Adt.axiom {
+   16   Boolean.Implies { Boolean.True {}, Boolean.False {} },
+   16   Boolean.False {}
+   32 }
 
-    8 Boolean [Adt.axioms].false_implies_v = Adt.axiom {
-    4   Boolean.Implies { Boolean.False {}, Boolean._v },
-    4   Boolean.True {},
-    8 }
+   32 Boolean [Adt.axioms].false_implies_v = Adt.axiom {
+   16   Boolean.Implies { Boolean.False {}, Boolean._v },
+   16   Boolean.True {},
+   32 }
 
       -- Equal
-    8 Boolean[Adt.axioms].eq_true_true = Adt.axiom {
-    4   Boolean.Equals {Boolean.True {}, Boolean.True {}},
-    4   Boolean.True {}
-    8 }
-    8 Boolean[Adt.axioms].eq_true_false = Adt.axiom {
-    4   Boolean.Equals {Boolean.True {}, Boolean.False {}},
-    4   Boolean.False {}
-    8 }
-    8 Boolean[Adt.axioms].eq_x_y = Adt.axiom {
-    4   Boolean.Equals {Boolean._x, Boolean._y},
-    4   Boolean.Equals {Boolean._y, Boolean._x}
-    8 }
+   32 Boolean[Adt.axioms].eq_true_true = Adt.axiom {
+   16   Boolean.Equals {Boolean.True {}, Boolean.True {}},
+   16   Boolean.True {}
+   32 }
+   32 Boolean[Adt.axioms].eq_true_false = Adt.axiom {
+   16   Boolean.Equals {Boolean.True {}, Boolean.False {}},
+   16   Boolean.False {}
+   32 }
+   32 Boolean[Adt.axioms].eq_x_y = Adt.axiom {
+   16   Boolean.Equals {Boolean._x, Boolean._y},
+   16   Boolean.Equals {Boolean._y, Boolean._x}
+   32 }
 
       -- And
-    8 Boolean[Adt.axioms].and_true_x = Adt.axiom {
-    4   Boolean.And { Boolean.True {}, Boolean._x },
+   32 Boolean[Adt.axioms].and_true_x = Adt.axiom {
+   16   Boolean.And { Boolean.True {}, Boolean._x },
         Boolean._x
-    8 }
-    8 Boolean[Adt.axioms].and_false_x = Adt.axiom {
-    4   Boolean.And { Boolean.False {}, Boolean._x },
-    4   Boolean.False {}
-    8 }
-    8 Boolean[Adt.axioms].and_x_y = Adt.axiom {
-    4   Boolean.And { Boolean._x, Boolean._y },
-    4   Boolean.And { Boolean._y, Boolean._x }
-    8 }
+   32 }
+   32 Boolean[Adt.axioms].and_false_x = Adt.axiom {
+   16   Boolean.And { Boolean.False {}, Boolean._x },
+   16   Boolean.False {}
+   32 }
+   32 Boolean[Adt.axioms].and_x_y = Adt.axiom {
+   16   Boolean.And { Boolean._x, Boolean._y },
+   16   Boolean.And { Boolean._y, Boolean._x }
+   32 }
 
       -- Or
-    8 Boolean[Adt.axioms].or_true_x = Adt.axiom {
-    4   Boolean.Or { Boolean.True {}, Boolean._x },
-    4   Boolean.True {}
-    8 }
-    8 Boolean[Adt.axioms].or_false_x = Adt.axiom {
-    4   Boolean.Or { Boolean.False {}, Boolean._x },
+   32 Boolean[Adt.axioms].or_true_x = Adt.axiom {
+   16   Boolean.Or { Boolean.True {}, Boolean._x },
+   16   Boolean.True {}
+   32 }
+   32 Boolean[Adt.axioms].or_false_x = Adt.axiom {
+   16   Boolean.Or { Boolean.False {}, Boolean._x },
         Boolean._x
-    8 }
-    8 Boolean[Adt.axioms].or_x_y = Adt.axiom {
-    4   Boolean.Or { Boolean._x, Boolean._y },
-    4   Boolean.Or { Boolean._y, Boolean._x}
-    8 }
+   32 }
+   32 Boolean[Adt.axioms].or_x_y = Adt.axiom {
+   16   Boolean.Or { Boolean._x, Boolean._y },
+   16   Boolean.Or { Boolean._y, Boolean._x}
+   32 }
 
       -- Xor
-    8 Boolean[Adt.axioms].xor_true_x = Adt.axiom {
-    4   Boolean.Xor {Boolean.True {}, Boolean._x },
-    4   Boolean.Not {Boolean._x}
-    8 }
-    8 Boolean[Adt.axioms].xor_false_x = Adt.axiom {
-    4   Boolean.Xor {Boolean.False {}, Boolean._x },
+   32 Boolean[Adt.axioms].xor_true_x = Adt.axiom {
+   16   Boolean.Xor {Boolean.True {}, Boolean._x },
+   16   Boolean.Not {Boolean._x}
+   32 }
+   32 Boolean[Adt.axioms].xor_false_x = Adt.axiom {
+   16   Boolean.Xor {Boolean.False {}, Boolean._x },
         Boolean._x
-    8 }
-    8 Boolean[Adt.axioms].or_x_y = Adt.axiom {
-    4   Boolean.Xor { Boolean._x, Boolean._y },
-    4   Boolean.Xor { Boolean._y, Boolean._x}
-    8 }
+   32 }
+   32 Boolean[Adt.axioms].or_x_y = Adt.axiom {
+   16   Boolean.Xor { Boolean._x, Boolean._y },
+   16   Boolean.Xor { Boolean._y, Boolean._x}
+   32 }
 
       -- Implies
 
-    4 return Boolean
+   16 return Boolean
 
 ==============================================================================
 ./src/adt/init.lua
 ==============================================================================
-    8 local Fun  = require "fun"
+   20 local Fun  = require "fun"
 
-   10 local Sort      = setmetatable ({}, { __tostring = function () return "Sort"      end })
-    8 local Variable  = setmetatable ({}, { __tostring = function () return "Variable"  end })
-    8 local Operation = setmetatable ({}, { __tostring = function () return "Operation" end })
-    8 local Axiom     = setmetatable ({}, { __tostring = function () return "Axiom"     end })
-    8 local Term      = setmetatable ({}, { __tostring = function () return "Term"      end })
+   22 local Sort      = setmetatable ({}, { __tostring = function () return "Sort"      end })
+   20 local Variable  = setmetatable ({}, { __tostring = function () return "Variable"  end })
+   23 local Operation = setmetatable ({}, { __tostring = function () return "Operation" end })
+   20 local Axiom     = setmetatable ({}, { __tostring = function () return "Axiom"     end })
+   20 local Term      = setmetatable ({}, { __tostring = function () return "Term"      end })
 
-    8 local Generator = {}
-    8 local Name      = {}
-    8 local Axioms    = {}
+   20 local Generator = {}
+   20 local Name      = {}
+   20 local Axioms    = {}
 
       -- ## Sort
 
-    8 Sort.__index = Sort
+   20 Sort.__index = Sort
 
-    8 getmetatable (Sort).__call = function (_, name)
-  128   return setmetatable ({
-   64     [Name  ] = name,
-   64     [Axioms] = {},
-  128   }, Sort)
+   20 getmetatable (Sort).__call = function (_, name)
+  272   return setmetatable ({
+  136     [Name  ] = name,
+  136     [Axioms] = {},
+  272   }, Sort)
       end
 
-    8 function Sort.__tostring (sort)
-  848   return tostring (sort [Name])
+   20 function Sort.__tostring (sort)
+ 2670   return tostring (sort [Name])
       end
 
-    8 function Sort.generators (t)
-   20   assert (type (t) == "table",
-   10           "parameter must be a table of generators")
-   20   Fun.fromtable (t)
-   10     : each (function (x)
-   40               assert (getmetatable (x) == Operation,
-   20                       "parameters must be operations")
+   20 function Sort.generators (t)
+   56   assert (type (t) == "table",
+   28           "parameter must be a table of generators")
+   56   Fun.fromtable (t)
+   28     : each (function (x)
+  112               assert (getmetatable (x) == Operation,
+   56                       "parameters must be operations")
                   end)
-   20   Fun.fromtable (t)
-   30     : each (function (x) x [Generator] = true end)
+   56   Fun.fromtable (t)
+   84     : each (function (x) x [Generator] = true end)
       end
 
       -- ## Variable
 
-    8 Variable.__index = Variable
+   20 Variable.__index = Variable
 
-    8 getmetatable (Variable).__call = function (_, t)
-   76   assert (type (t) == "table")
-  152   local result = setmetatable ({
-   76     [Name] = t [Name],
-   76     [Sort] = t [Sort],
-   76   }, Variable)
-   76   return result
+   20 getmetatable (Variable).__call = function (_, t)
+  230   assert (type (t) == "table")
+  460   local result = setmetatable ({
+  230     [Name] = t [Name],
+  230     [Sort] = t [Sort],
+  230   }, Variable)
+  230   return result
       end
 
-    8 function Variable.__tostring (variable)
-   46   return tostring (variable [Name]) .. ": " .. tostring (variable [Sort])
+   20 function Variable.__tostring (variable)
+  136   return tostring (variable [Name]) .. ": " .. tostring (variable [Sort])
       end
 
       -- ## Operation
 
-    8 function Sort.__index (sort, key)
-   61   if rawget (Sort, key)
-   61   or (type (key) == "string" and key:match "^__") then
-   12     return rawget (Sort, key)
-   49   elseif key:match "^_" then
-   98     local result = Variable {
-   49       [Name] = key:match "^_(.*)$",
-   49       [Sort] = sort,
-          }
-   49     rawset (sort, key, result)
-   49     return result
-        end
-      end
-
-    8 function Sort.__newindex (sort, key, t)
-  132   if type (t) == "table" then
-  256     Fun.frommap (t):each (function (k, s)
-  136       assert (getmetatable (s) == Sort, tostring (k) .. " must be a sort")
-          end)
-  256     local result = setmetatable ({
-  128       [Name] = key,
+   20 function Sort.__index (sort, key)
+  160   if rawget (Sort, key)
+  160   or (type (key) == "string" and key:match "^__") then
+   32     return rawget (Sort, key)
+  128   elseif key:match "^_" then
+  256     local result = Variable {
+  128       [Name] = key:match "^_(.*)$",
   128       [Sort] = sort,
-  128     }, Operation)
-  256     Fun.frommap (t):each (function (k, v)
-  136       result [k] = v
-          end)
+          }
   128     rawset (sort, key, result)
-        else
-    4     rawset (sort, key, t)
+  128     return result
         end
       end
 
-    8 function Operation.__eq (lhs, rhs)
-   30   return Fun.frommap (lhs)
-   31          : all (function (k, v) return rhs [k] == v end)
-   15      and Fun.frommap (rhs)
-   15          : all (function (k, v) return lhs [k] == v end)
+   20 function Sort.__newindex (sort, key, t)
+  328   if type (t) == "table" then
+  632     Fun.frommap (t):each (function (k, s)
+  348       assert (getmetatable (s) == Sort, tostring (k) .. " must be a sort")
+          end)
+  632     local result = setmetatable ({
+  316       [Name] = key,
+  316       [Sort] = sort,
+  316     }, Operation)
+  632     Fun.frommap (t):each (function (k, v)
+  348       result [k] = v
+          end)
+  316     rawset (sort, key, result)
+        else
+   12     rawset (sort, key, t)
+        end
       end
 
-    8 function Operation.__tostring (operation)
-    8   local t = Fun.frommap (operation)
-   10           : filter  (function (k, _   ) return type (k) ~= "table" end)
-    6           : map     (function (k, sort) return tostring (k) .. ": " .. tostring (sort) end)
-    2           : totable ()
-    2   return tostring (operation [Name])
-    2       .. (#t == 0 and "" or " { " .. table.concat (t, ", ") .. " }")
+   20 function Operation.__eq (lhs, rhs)
+   72   return Fun.frommap (lhs)
+   77          : all (function (k, v) return rhs [k] == v end)
+   36      and Fun.frommap (rhs)
+   36          : all (function (k, v) return lhs [k] == v end)
+      end
+
+   20 function Operation.__tostring (operation)
+   16   local t = Fun.frommap (operation)
+   20           : filter  (function (k, _   ) return type (k) ~= "table" end)
+   12           : map     (function (k, sort) return tostring (k) .. ": " .. tostring (sort) end)
+    4           : totable ()
+    4   return tostring (operation [Name])
+    4       .. (#t == 0 and "" or " { " .. table.concat (t, ", ") .. " }")
             .. ": "
-    2       .. tostring (operation [Sort])
+    4       .. tostring (operation [Sort])
       end
 
-    8 function Operation.__call (operation, t)
- 1836   local result = setmetatable ({
-  918     [Operation] = operation,
-  918     [Name     ] = operation [Name],
-  918     [Sort     ] = operation [Sort],
-  918   }, Term)
- 1836   Fun.frommap (t):each (function (k, v)
- 1568     assert (operation [k],
-  784             tostring (k) .. " must be a field of " .. tostring (operation [Name]))
- 1562     assert (getmetatable (v) == Term or getmetatable (v) == Variable,
-  781             tostring (k) .. " must be a term or a variable")
-  780     if getmetatable (v) == Term then
-  776       assert (v [Sort] == operation [k],
-  776               tostring (k) .. " must be of sort " .. tostring (operation [k]))
-  392     elseif getmetatable (v) == Variable then
-  784       assert (v [Sort] == operation [k],
-  392               tostring (k) .. " must be of sort " .. tostring (operation [k]))
+   20 function Operation.__call (operation, t)
+ 5840   local result = setmetatable ({
+ 2920     [Operation] = operation,
+ 2920     [Name     ] = operation [Name],
+ 2920     [Sort     ] = operation [Sort],
+ 2920   }, Term)
+ 5840   Fun.frommap (t):each (function (k, v)
+ 5002     assert (operation [k],
+ 2501             tostring (k) .. " must be a field of " .. tostring (operation [Name]))
+ 4974     assert (getmetatable (v) == Term or getmetatable (v) == Variable,
+ 2487             tostring (k) .. " must be a term or a variable")
+ 2486     if getmetatable (v) == Term then
+ 2432       assert (v [Sort] == operation [k],
+ 2432               tostring (k) .. " must be of sort " .. tostring (operation [k]))
+ 1270     elseif getmetatable (v) == Variable then
+ 2540       assert (v [Sort] == operation [k],
+ 1270               tostring (k) .. " must be of sort " .. tostring (operation [k]))
           end
-  780     result [k] = v
+ 2486     result [k] = v
         end)
-  914   return result
+ 2905   return result
       end
 
       -- ## Term
 
-    8 Term.__index = Term
+   20 Term.__index = Term
 
-    8 function Term.__tostring (term)
-   56   local t = Fun.frommap (term)
-   60           : filter  (function (k, _) return type (k) ~= "table" end)
-   18           : map     (function (k, t) return tostring (k) .. " = " .. tostring (t) end)
-   14           : totable ()
-   14   return tostring (term [Name])
-   14       .. (#t == 0 and "" or " { " .. table.concat (t, ", ") .. " }")
-   14       .. ": " .. tostring (term [Sort])
+   20 function Term.__tostring (term)
+  128   local t = Fun.frommap (term)
+  136           : filter  (function (k, _) return type (k) ~= "table" end)
+   40           : map     (function (k, t) return tostring (k) .. " = " .. tostring (t) end)
+   32           : totable ()
+   32   return tostring (term [Name])
+   32       .. (#t == 0 and "" or " { " .. table.concat (t, ", ") .. " }")
+   32       .. ": " .. tostring (term [Sort])
       end
 
-    8 function Term.__eq (lhs, rhs)
-   85   if getmetatable (lhs) ~= getmetatable (rhs) then
-    2     return false
+   20 function Term.__eq (lhs, rhs)
+  192   if getmetatable (lhs) ~= getmetatable (rhs) then
+    4     return false
         end
-  166   assert (getmetatable (lhs) == Term,
-   83           "lhs must be a term or a variable")
-  166   assert (getmetatable (rhs) == Term,
-   83           "rhs must be a term or a variable")
-  166   return Fun.frommap (lhs)
-  336          : all (function (k, v) return rhs [k] == v end)
-  154      and Fun.frommap (rhs)
-  392          : all (function (k, v) return lhs [k] == v end)
+  376   assert (getmetatable (lhs) == Term,
+  188           "lhs must be a term or a variable")
+  376   assert (getmetatable (rhs) == Term,
+  188           "rhs must be a term or a variable")
+  376   return Fun.frommap (lhs)
+  762          : all (function (k, v) return rhs [k] == v end)
+  348      and Fun.frommap (rhs)
+  880          : all (function (k, v) return lhs [k] == v end)
       end
 
-    8 function Term.equivalence (lhs, rhs)
-  154   assert (getmetatable (lhs) == Term or getmetatable (lhs) == Variable,
-   77           "lhs must be a term or a variable")
-  154   assert (getmetatable (rhs) == Term or getmetatable (rhs) == Variable,
-   77           "rhs must be a term or a variable")
-   77   if lhs [Sort] ~= rhs [Sort] then
-    4     return nil
+   20 function Term.equivalence (lhs, rhs)
+  372   assert (getmetatable (lhs) == Term or getmetatable (lhs) == Variable,
+  186           "lhs must be a term or a variable")
+  372   assert (getmetatable (rhs) == Term or getmetatable (rhs) == Variable,
+  186           "rhs must be a term or a variable")
+  186   if lhs [Sort] ~= rhs [Sort] then
+    8     return nil
         end
-   73   local variables = {}
+  178   local variables = {}
         local function compare (l, r)
           local result
-  178     if  getmetatable (l) == Variable
-   76     and getmetatable (r) == Variable then
-   50       if (variables [l] and variables [l] ~= r)
-  113       or (variables [r] and variables [r] ~= l) then
-  135         result = false
+  410     if  getmetatable (l) == Variable
+   84     and getmetatable (r) == Variable then
+   48       if (variables [l] and variables [l] ~= r)
+   44       or (variables [r] and variables [r] ~= l) then
+    8         result = false
             else
-   10         variables [l] = r
-   14         variables [r] = l
-   10         result = true
+   40         variables [l] = r
+   40         variables [r] = l
+   40         result = true
             end
-  111     elseif getmetatable (l) == Variable
-   14        and getmetatable (r) == Term then
-   14       if variables [l] and variables [l] ~= r then
-    3         result = false
+  362     elseif getmetatable (l) == Variable
+   36        and getmetatable (r) == Term then
+   36       if variables [l] and variables [l] ~= r then
+    4         result = false
             else
-   11         variables [l] = r
-   11         result = true
-            end
-   88     elseif getmetatable (l) == Term
-  114        and getmetatable (r) == Variable then
-   34       if variables [r] and variables [r] ~= l then
-   18         result = false
-            else
-   16         variables [r] = l
+   32         variables [l] = r
    32         result = true
             end
-   71     elseif getmetatable (l) == Term
-   80        and getmetatable (r) == Term then
-   80       if l [Operation] == r [Operation] then
-  210         result = Fun.frommap (l [Operation])
-  272           : filter (function (k) return type (k) ~= "table" end)
-  196           : all (function (k) return compare (l [k], r [k]) end)
+  326     elseif getmetatable (l) == Term
+  326        and getmetatable (r) == Variable then
+   68       if variables [r] and variables [r] ~= l then
+    4         result = false
             else
-   12         result = false
+   64         variables [r] = l
+   64         result = true
+            end
+  258     elseif getmetatable (l) == Term
+  258        and getmetatable (r) == Term then
+  258       if l [Operation] == r [Operation] then
+  726         result = Fun.frommap (l [Operation])
+  970           : filter (function (k) return type (k) ~= "table" end)
+  716           : all (function (k) return compare (l [k], r [k]) end)
+            else
+   16         result = false
             end
           end
-  135     return result
+  410     return result
         end
-   50   return compare (lhs, rhs), variables
+  178   return compare (lhs, rhs), variables
       end
 
-    7 function Term.__div (term, mapping)
-   43   assert (getmetatable (term) == Term or getmetatable (term) == Variable,
-   22           "term must be a term or a variable")
-   23   assert (type (mapping) == "table")
-   44   Fun.frommap (mapping):each (function (k, v)
-   43     assert (getmetatable (k) == Variable,
-   23             tostring (k) .. " must be a variable")
-   43     assert (getmetatable (v) == Variable or getmetatable (v) == Term,
-   23             tostring (k) .. " must be a term or a variable")
+   20 function Term.__div (term, mapping)
+  128   assert (getmetatable (term) == Term or getmetatable (term) == Variable,
+   64           "term must be a term or a variable")
+   64   assert (type (mapping) == "table")
+  128   Fun.frommap (mapping):each (function (k, v)
+  132     assert (getmetatable (k) == Variable,
+   66             tostring (k) .. " must be a variable")
+  132     assert (getmetatable (v) == Variable or getmetatable (v) == Term,
+   66             tostring (k) .. " must be a term or a variable")
         end)
         local function rename (t)
-   60     if getmetatable (t) == Variable then
-   26       return mapping [t] or t
+  180     if getmetatable (t) == Variable then
+   78       return mapping [t] or t
           else
-  136       return t [Operation] (Fun.frommap (t)
-  177         : filter  (function (k, _) return type (k) ~= "table" end)
-   76         : map     (function (k, v) return k, rename (v) end)
-   36         : tomap ())
+  408       return t [Operation] (Fun.frommap (t)
+  524         : filter  (function (k, _) return type (k) ~= "table" end)
+  218         : map     (function (k, v) return k, rename (v) end)
+  102         : tomap ())
           end
         end
-   23   return rename (term)
+   64   return rename (term)
       end
 
-    8 Variable.__div = Term.__div
+   20 Variable.__div = Term.__div
 
       -- ## Axiom
 
-    5 getmetatable (Axiom).__call = function (_, t)
-  308   assert (type (t) == "table",
-  157           "Axiom takes a table as parameter")
-  394   assert (t.when == nil or getmetatable (t.when) == Term,
-  197           "when must be a Boolean term")
-  394   assert (#t == 2,
-  197           "axiom must be between two terms")
-  240   local result = setmetatable ({}, Axiom)
-  351   Fun.frommap (t):each (function (k, v)
-  354     if type (k) == "number" then
-  702       assert (getmetatable (v) == Term or getmetatable (v) == Variable,
-  397               tostring (k) .. " must be a term or a variable")
+   20 getmetatable (Axiom).__call = function (_, t)
+ 1232   assert (type (t) == "table",
+  616           "Axiom takes a table as parameter")
+ 1232   assert (t.when == nil or getmetatable (t.when) == Term,
+  616           "when must be a Boolean term")
+ 1232   assert (#t == 2,
+  616           "axiom must be between two terms")
+  616   local result = setmetatable ({}, Axiom)
+ 1232   Fun.frommap (t):each (function (k, v)
+ 1244     if type (k) == "number" then
+ 2464       assert (getmetatable (v) == Term or getmetatable (v) == Variable,
+ 1232               tostring (k) .. " must be a term or a variable")
           end
-  397     result [k] = v
+ 1244     result [k] = v
         end)
-  243   return result
+  616   return result
       end
 
-    8 function Axiom.__tostring (axiom)
-    3   local t = Fun.fromtable (axiom)
-    6           : map (function (x) return tostring (x) end)
+   20 function Axiom.__tostring (axiom)
+   12   local t = Fun.fromtable (axiom)
+   12           : map (function (x) return tostring (x) end)
     4           : totable ()
     4   return table.concat (t, " = ")
-    2       .. (axiom.when and " when " .. tostring (axiom.when) or "")
+    4       .. (axiom.when and " when " .. tostring (axiom.when) or "")
       end
 
-    8 function Axiom.__eq (lhs, rhs)
-    4   return Fun.frommap (lhs)
-    9          : all (function (k, v) return rhs [k] == v end)
-    6      and Fun.frommap (rhs)
+   20 function Axiom.__eq (lhs, rhs)
+   16   return Fun.frommap (lhs)
+   24          : all (function (k, v) return rhs [k] == v end)
+    8      and Fun.frommap (rhs)
     8          : all (function (k, v) return lhs [k] == v end)
       end
 
       -- # Adt
 
-    5 return {
-    5   name      = Name,
-    8   generator = Generator,
-    8   axioms    = Axioms,
-    8   Sort      = Sort,
-    8   Variable  = Variable,
-    8   Operation = Operation,
-    8   Term      = Term,
-    8   Axiom     = Axiom,
-  156   axiom     = function (...) return getmetatable (Axiom).__call (Axiom, ...) end,
-    8 }
+   20 return {
+   20   name      = Name,
+   20   generator = Generator,
+   20   axioms    = Axioms,
+   20   Sort      = Sort,
+   20   Variable  = Variable,
+   20   Operation = Operation,
+   20   Term      = Term,
+   20   Axiom     = Axiom,
+  612   axiom     = function (...) return getmetatable (Axiom).__call (Axiom, ...) end,
+   20 }
 
 ==============================================================================
 ./src/adt/natural.lua
 ==============================================================================
-    4 local Fun     = require "fun"
-    4 local Adt     = require "adt"
-    4 local Boolean = require "adt.boolean"
-    4 local Natural = Adt.Sort "Natural"
+   12 local Fun     = require "fun"
+   12 local Adt     = require "adt"
+   12 local Boolean = require "adt.boolean"
+   12 local Natural = Adt.Sort "Natural"
 
-    4 Natural.Zero        = {}
-    4 Natural.Successor   = { Natural }
-    4 Natural.Increment   = { Natural }
-    4 Natural.Decrement   = { Natural }
-    4 Natural.Addition    = { Natural, Natural }
-    4 Natural.Subtraction = { Natural, Natural }
-    4 Boolean.Is_even     = { Natural }
+   12 Natural.Zero        = {}
+   12 Natural.Successor   = { Natural }
+   12 Natural.Increment   = { Natural }
+   12 Natural.Decrement   = { Natural }
+   12 Natural.Addition    = { Natural, Natural }
+   12 Natural.Subtraction = { Natural, Natural }
+   12 Boolean.Is_even     = { Natural }
 
-    4 Natural.generators { Natural.Zero, Natural.Successor }
+   12 Natural.generators { Natural.Zero, Natural.Successor }
 
-    4 function Natural.nth (n)
-    4   return Fun.range (1, n)
-    8        : reduce (function (i) return Natural.Successor { i } end, Natural.Zero {})
+   12 function Natural.nth (n)
+    8   return Fun.range (1, n)
+   16        : reduce (function (i) return Natural.Successor { i } end, Natural.Zero {})
       end
 
       -- Increment
-    7 Natural [Adt.axioms].increment = Adt.axiom {
-    4   Natural.Increment { Natural._v },
-    5   Natural.Successor { Natural._v },
-    8 }
+   24 Natural [Adt.axioms].increment = Adt.axiom {
+   12   Natural.Increment { Natural._v },
+   12   Natural.Successor { Natural._v },
+   24 }
 
       -- Decrement
-    8 Natural [Adt.axioms].decrement = Adt.axiom {
-    5   Natural.Decrement { Natural.Successor { Natural._v } },
+   24 Natural [Adt.axioms].decrement = Adt.axiom {
+   12   Natural.Decrement { Natural.Successor { Natural._v } },
         Natural._v,
-    6 }
+   24 }
 
       -- Addition
 
-    6 Natural [Adt.axioms].addition_zero = Adt.axiom {
-    5   Natural.Addition { Natural._x, Natural.Zero {} },
+   24 Natural [Adt.axioms].addition_zero = Adt.axiom {
+   12   Natural.Addition { Natural._x, Natural.Zero {} },
         Natural._x,
-    7 }
+   24 }
 
-    8 Natural [Adt.axioms].addition_nonzero = Adt.axiom {
-    5   Natural.Addition  { Natural._x, Natural.Successor { Natural._y } },
-    4   Natural.Successor { Natural.Addition { Natural._x, Natural._y } },
-    6 }
-    8 Natural [Adt.axioms].subtraction_zero = Adt.axiom {
-    5   Natural.Subtraction { Natural._x, Natural.Zero {} },
+   24 Natural [Adt.axioms].addition_nonzero = Adt.axiom {
+   12   Natural.Addition  { Natural._x, Natural.Successor { Natural._y } },
+   12   Natural.Successor { Natural.Addition { Natural._x, Natural._y } },
+   24 }
+   24 Natural [Adt.axioms].subtraction_zero = Adt.axiom {
+   12   Natural.Subtraction { Natural._x, Natural.Zero {} },
         Natural._x
-    7 }
-    8 Natural [Adt.axioms].subtraction_nonzero = Adt.axiom {
-    5   Natural.Subtraction { Natural._x, Natural.Decrement { Natural._y } },
-    4   Natural.Decrement { Natural.Subtraction { Natural._x, Natural._y } }
-    7 }
-    8 Boolean [Adt.axioms].is_even_zero = Adt.axiom {
-    5   Boolean.Is_even { Natural.Zero {} },
-    4   Boolean.True {}
-    7 }
-    8 Boolean [Adt.axioms].is_even_nonzero = Adt.axiom {
-    3   Boolean.Is_even { Natural._x },
-    4   Boolean.Not { Boolean.Is_even { Natural.Decrement { Natural._x } } }
-    6 }
+   24 }
+   24 Natural [Adt.axioms].subtraction_nonzero = Adt.axiom {
+   12   Natural.Subtraction { Natural._x, Natural.Decrement { Natural._y } },
+   12   Natural.Decrement { Natural.Subtraction { Natural._x, Natural._y } }
+   24 }
+   24 Boolean [Adt.axioms].is_even_zero = Adt.axiom {
+   12   Boolean.Is_even { Natural.Zero {} },
+   12   Boolean.True {}
+   24 }
+   24 Boolean [Adt.axioms].is_even_nonzero = Adt.axiom {
+   12   Boolean.Is_even { Natural._x },
+   12   Boolean.Not { Boolean.Is_even { Natural.Decrement { Natural._x } } }
+   24 }
 
       -- Substraction
-    6 Natural [Adt.axioms].v_substraction_zero = Adt.axiom {
-    3   Natural.Subtraction { Natural._v, Natural.Zero {} },
+   24 Natural [Adt.axioms].v_substraction_zero = Adt.axiom {
+   12   Natural.Subtraction { Natural._v, Natural.Zero {} },
         Natural._v,
-    6 }
+   24 }
 
-    6 Natural [Adt.axioms].sx_substraction_sy = Adt.axiom {
-    6   Natural.Subtraction { Natural.Successor { Natural._x },
-    3                         Natural.Successor { Natural._y } },
-    3   Natural.Subtraction { Natural._x, Natural._y },
-    6 }
+   24 Natural [Adt.axioms].sx_substraction_sy = Adt.axiom {
+   24   Natural.Subtraction { Natural.Successor { Natural._x },
+   12                         Natural.Successor { Natural._y } },
+   12   Natural.Subtraction { Natural._x, Natural._y },
+   24 }
 
       -- Is_even
-    6 Natural [Adt.axioms].is_even_zero = Adt.axiom {
-    3   Boolean.Is_even { Natural.Zero {} },
-    3   Boolean.True {},
-    6 }
+   24 Natural [Adt.axioms].is_even_zero = Adt.axiom {
+   12   Boolean.Is_even { Natural.Zero {} },
+   12   Boolean.True {},
+   24 }
 
-    6 Natural [Adt.axioms].is_even_sv = Adt.axiom {
-    3   Boolean.Is_even { Natural.Successor { Natural._v } },
-    3   Boolean.Not { Boolean.Is_even { Natural._v } },
-    6 }
+   24 Natural [Adt.axioms].is_even_sv = Adt.axiom {
+   12   Boolean.Is_even { Natural.Successor { Natural._v } },
+   12   Boolean.Not { Boolean.Is_even { Natural._v } },
+   24 }
 
-    3 return Natural
+   12 return Natural
 
 ==============================================================================
 ./src/adt/theorem.lua
 ==============================================================================
-    2 local Fun     = require "fun"
-    2 local Hashids = require "hashids"
-    2 local Adt     = require "adt"
-    2 local Boolean = require "adt.boolean"
+    8 local Fun     = require "fun"
+    8 local Hashids = require "hashids"
+    8 local Adt     = require "adt"
+    8 local Boolean = require "adt.boolean"
 
-    2 local hash = Hashids.new ("modeling & verification", 4)
+    8 local hash = Hashids.new ("modeling & verification", 4)
 
-    2 local Theorem    = setmetatable ({}, { __tostring = function () return "Theorem"    end })
-    2 local Conjecture = setmetatable ({}, { __tostring = function () return "Conjecture" end })
+    8 local Theorem    = setmetatable ({}, { __tostring = function () return "Theorem"    end })
+    8 local Conjecture = setmetatable ({}, { __tostring = function () return "Conjecture" end })
 
-    2 Theorem.Conjecture = Conjecture
+    8 Theorem.Conjecture = Conjecture
 
-    2 local Variables = setmetatable ({}, { __mode = "v" })
+    8 local Variables = setmetatable ({}, { __mode = "v" })
 
       local function simplify (term)
-   14   assert (getmetatable (term) == Adt.Term,
-    7           "parameter must be a term")
-   14   assert (term [Adt.Sort] == Boolean,
-    7           "parameter must be a Boolean")
-    7   if term == Boolean.True {} then
-    5     return nil
+   56   assert (getmetatable (term) == Adt.Term,
+   28           "parameter must be a term")
+   56   assert (term [Adt.Sort] == Boolean,
+   28           "parameter must be a Boolean")
+   28   if term == Boolean.True {} then
+   20     return nil
         else
-    2     return term
+    8     return term
         end
       end
 
       local function rename (term, variables)
-  207   if getmetatable (term) == Adt.Variable then
-   58     if not variables [term] then
-   50       variables [term] = Adt.Variable {
-   25         [Adt.Sort] = term [Adt.Sort],
-   25         [Adt.name] = hash:encode (#Variables+1)
-   25       }
-   25       Variables [#Variables+1] = variables [term]
+  750   if getmetatable (term) == Adt.Variable then
+  228     if not variables [term] then
+  196       variables [term] = Adt.Variable {
+   98         [Adt.Sort] = term [Adt.Sort],
+   98         [Adt.name] = hash:encode (#Variables+1)
+   98       }
+   98       Variables [#Variables+1] = variables [term]
           end
-   58     return variables [term]
+  228     return variables [term]
         else
-  596     return term [Adt.Operation] (Fun.frommap (term)
-  711       : filter  (function (k, _) return type (k) ~= "table" end)
-  264       : map     (function (k, t) return k, rename (t, variables) end)
-  149       : tomap   ())
+ 2088     return term [Adt.Operation] (Fun.frommap (term)
+ 2498       : filter  (function (k, _) return type (k) ~= "table" end)
+  932       : map     (function (k, t) return k, rename (t, variables) end)
+  522       : tomap   ())
         end
       end
 
       local function all_variables (x, variables)
-  211   variables = variables or {}
-  211   if getmetatable (x) == Adt.Axiom
-  204   or getmetatable (x) == Theorem
-  187   or getmetatable (x) == Conjecture then
-   52     Fun.frommap (x.variables or {}):each (function (k, v)
-   15       variables [k] = v
+  752   variables = variables or {}
+  752   if getmetatable (x) == Adt.Axiom
+  724   or getmetatable (x) == Theorem
+  668   or getmetatable (x) == Conjecture then
+  182     Fun.frommap (x.variables or {}):each (function (k, v)
+   49       variables [k] = v
           end)
-   26     all_variables (x.when, variables)
-   26     all_variables (x [1] , variables)
-   26     all_variables (x [2] , variables)
-  185   elseif getmetatable (x) == Adt.Variable then
-   65     variables [x] = x
-  120   elseif getmetatable (x) == Adt.Term then
-  285     Fun.frommap (x)
-  480       : filter (function (k, _) return type (k) ~= "table" end)
-  195       : each   (function (_, t) all_variables (t, variables) end)
+   91     all_variables (x.when, variables)
+   91     all_variables (x [1] , variables)
+   91     all_variables (x [2] , variables)
+  661   elseif getmetatable (x) == Adt.Variable then
+  238     variables [x] = x
+  423   elseif getmetatable (x) == Adt.Term then
+ 1008     Fun.frommap (x)
+ 1704       : filter (function (k, _) return type (k) ~= "table" end)
+  696       : each   (function (_, t) all_variables (t, variables) end)
         end
-  211   return variables
+  752   return variables
       end
 
-    2 getmetatable (Theorem).__call = function (_, t)
-   84   assert (type (t) == "table",
-   42           "Theorem takes a table as parameter")
-   84   assert ( t.when == nil
-   42         or (getmetatable (t.when) == Adt.Term and t.when [Adt.Sort] == Boolean),
-   42           "when must be a Boolean term")
-   84   assert (#t == 2,
-   42           "theorem must be between two terms")
-   84   assert (getmetatable (t [1]) == Adt.Term or getmetatable (t [1]) == Adt.Variable,
-   42           "lhs must be a term or a variable")
-   84   assert (getmetatable (t [2]) == Adt.Term or getmetatable (t [2]) == Adt.Variable,
-   42           "rhs must be a term or a variable")
-   42   local variables = {}
-   42   local when      = t.when and simplify (t.when)
-   84   local result    = setmetatable ({
-   42     variables = {},
-   42     when = when and rename (when, variables),
-   42     [1]  = rename (t [1], variables),
-   42     [2]  = rename (t [2], variables),
-   42   }, Theorem)
-   77   for k, v in pairs (t.variables or {}) do
-   35     result.variables [k] = variables [v]
+    8 getmetatable (Theorem).__call = function (_, t)
+  308   assert (type (t) == "table",
+  154           "Theorem takes a table as parameter")
+  308   assert ( t.when == nil
+  154         or (getmetatable (t.when) == Adt.Term and t.when [Adt.Sort] == Boolean),
+  154           "when must be a Boolean term")
+  308   assert (#t == 2,
+  154           "theorem must be between two terms")
+  308   assert (getmetatable (t [1]) == Adt.Term or getmetatable (t [1]) == Adt.Variable,
+  154           "lhs must be a term or a variable")
+  308   assert (getmetatable (t [2]) == Adt.Term or getmetatable (t [2]) == Adt.Variable,
+  154           "rhs must be a term or a variable")
+  154   local variables = {}
+  154   local when      = t.when and simplify (t.when)
+  308   local result    = setmetatable ({
+  154     variables = {},
+  154     when = when and rename (when, variables),
+  154     [1]  = rename (t [1], variables),
+  154     [2]  = rename (t [2], variables),
+  154   }, Theorem)
+  275   for k, v in pairs (t.variables or {}) do
+  121     result.variables [k] = variables [v]
         end
-   42   return result
+  154   return result
       end
 
-    2 getmetatable (Conjecture).__call = function (_, t)
-    6   assert (type (t) == "table",
-    3           "Conjecture takes a table as parameter")
-    6   assert ( t.when == nil
-    3         or (getmetatable (t.when) == Adt.Term and t.when [Adt.Sort] == Boolean),
-    3           "when must be a Boolean term")
-    6   assert (#t == 2,
-    3           "conjecture must be between two terms")
-    6   assert (getmetatable (t [1]) == Adt.Term or getmetatable (t [1]) == Adt.Variable,
-    3           "lhs must be a term or a variable")
-    6   assert (getmetatable (t [2]) == Adt.Term or getmetatable (t [2]) == Adt.Variable,
-    3           "rhs must be a term or a variable")
-    3   local when      = t.when and simplify (t.when)
-    3   local variables = {}
-    3   if when then
+    8 getmetatable (Conjecture).__call = function (_, t)
+   24   assert (type (t) == "table",
+   12           "Conjecture takes a table as parameter")
+   24   assert ( t.when == nil
+   12         or (getmetatable (t.when) == Adt.Term and t.when [Adt.Sort] == Boolean),
+   12           "when must be a Boolean term")
+   24   assert (#t == 2,
+   12           "conjecture must be between two terms")
+   24   assert (getmetatable (t [1]) == Adt.Term or getmetatable (t [1]) == Adt.Variable,
+   12           "lhs must be a term or a variable")
+   24   assert (getmetatable (t [2]) == Adt.Term or getmetatable (t [2]) == Adt.Variable,
+   12           "rhs must be a term or a variable")
+   12   local when      = t.when and simplify (t.when)
+   12   local variables = {}
+   12   if when then
 ****0     all_variables (when, variables)
         end
-    3   all_variables (t [1], variables)
-    3   all_variables (t [2], variables)
-    6   local result    = setmetatable ({
-    3     variables = variables,
-    3     when = when and rename (when, variables),
-    3     [1]  = rename (t [1], variables),
-    3     [2]  = rename (t [2], variables),
-    3   }, Conjecture)
-    3   return result
+   12   all_variables (t [1], variables)
+   12   all_variables (t [2], variables)
+   24   local result    = setmetatable ({
+   12     variables = variables,
+   12     when = when and rename (when, variables),
+   12     [1]  = rename (t [1], variables),
+   12     [2]  = rename (t [2], variables),
+   12   }, Conjecture)
+   12   return result
       end
 
-    2 function Theorem.__tostring (axiom)
-    3   local t = Fun.fromtable (axiom)
-    3           : map (function (x) return tostring (x) end)
-    1           : totable ()
-    1   return table.concat (t, " = ")
-    1       .. (axiom.when and " when " .. tostring (axiom.when) or "")
+    8 function Theorem.__tostring (axiom)
+   12   local t = Fun.fromtable (axiom)
+   12           : map (function (x) return tostring (x) end)
+    4           : totable ()
+    4   return table.concat (t, " = ")
+    4       .. (axiom.when and " when " .. tostring (axiom.when) or "")
       end
 
-    2 function Theorem.__eq (lhs, rhs)
-    9   return Adt.Term.equivalence (lhs [1] , rhs [1] )
-    9      and Adt.Term.equivalence (lhs [2] , rhs [2] )
-    9      and (lhs.when and rhs.when and Adt.Term.equivalence (lhs.when, rhs.when)
-    9           or lhs.when == rhs.when)
+    8 function Theorem.__eq (lhs, rhs)
+   32   return Adt.Term.equivalence (lhs [1] , rhs [1] )
+   32      and Adt.Term.equivalence (lhs [2] , rhs [2] )
+   32      and (lhs.when and rhs.when and Adt.Term.equivalence (lhs.when, rhs.when)
+   32           or lhs.when == rhs.when)
       end
 
-    2 function Theorem.conjecture (conjecture)
-    4   assert (getmetatable (conjecture) == Conjecture,
-    2           "parameter must be an conjecture")
-    4   return Theorem {
-    2     variables = all_variables (conjecture),
-    2     when = conjecture.when,
-    2     [1]  = conjecture [1],
-    2     [2]  = conjecture [2],
-        }
-      end
-
-    2 function Theorem.axiom (axiom)
-   14   assert (getmetatable (axiom) == Adt.Axiom,
-    7           "parameter must be an axiom")
+    8 function Theorem.conjecture (conjecture)
+   14   assert (getmetatable (conjecture) == Conjecture,
+    7           "parameter must be an conjecture")
    14   return Theorem {
-    7     variables = all_variables (axiom),
-    7     when = axiom.when,
-    7     [1]  = axiom [1],
-    7     [2]  = axiom [2],
+    7     variables = all_variables (conjecture),
+    7     when = conjecture.when,
+    7     [1]  = conjecture [1],
+    7     [2]  = conjecture [2],
         }
       end
 
-    2 function Theorem.reflexivity (term)
-    2   assert (getmetatable (term) == Adt.Term or getmetatable (term) == Adt.Variable,
-    1           "parameter must be a term or a variable")
-    2   return Theorem {
-    1     variables = all_variables (term),
-    1     [1] = term,
-    1     [2] = term,
+    8 function Theorem.axiom (axiom)
+   56   assert (getmetatable (axiom) == Adt.Axiom,
+   28           "parameter must be an axiom")
+   56   return Theorem {
+   28     variables = all_variables (axiom),
+   28     when = axiom.when,
+   28     [1]  = axiom [1],
+   28     [2]  = axiom [2],
         }
       end
 
-    2 function Theorem.symmetry (theorem)
-    2   assert (getmetatable (theorem) == Theorem,
-    1           "parameter must be a theorem")
-    2   return Theorem {
-    1     variables = all_variables (theorem),
-    1     when = theorem.when,
-    1     [1]  = theorem [2],
-    1     [2]  = theorem [1],
+    8 function Theorem.reflexivity (term)
+    8   assert (getmetatable (term) == Adt.Term or getmetatable (term) == Adt.Variable,
+    4           "parameter must be a term or a variable")
+    8   return Theorem {
+    4     variables = all_variables (term),
+    4     [1] = term,
+    4     [2] = term,
         }
       end
 
-    2 function Theorem.transitivity (lhs, rhs)
-    4   assert (getmetatable (lhs) == Theorem,
-    2           "lhs must be a theorem")
-    4   assert (getmetatable (rhs) == Theorem,
-    2           "rhs must be a theorem")
-    2   local ok, variables = Adt.Term.equivalence (lhs [2], rhs [1])
-    2   if ok then
+    8 function Theorem.symmetry (theorem)
+    8   assert (getmetatable (theorem) == Theorem,
+    4           "parameter must be a theorem")
+    8   return Theorem {
+    4     variables = all_variables (theorem),
+    4     when = theorem.when,
+    4     [1]  = theorem [2],
+    4     [2]  = theorem [1],
+        }
+      end
+
+    8 function Theorem.transitivity (lhs, rhs)
+   12   assert (getmetatable (lhs) == Theorem,
+    6           "lhs must be a theorem")
+   12   assert (getmetatable (rhs) == Theorem,
+    6           "rhs must be a theorem")
+    6   local ok, variables = Adt.Term.equivalence (lhs [2], rhs [1])
+    6   if ok then
           local when
-    2     if lhs.when and rhs.when then
+    6     if lhs.when and rhs.when then
 ****0       when = Boolean.And {
 ****0         lhs.when,
 ****0         rhs.when / variables,
             }
-    2     elseif lhs.when then
+    6     elseif lhs.when then
 ****0       when = lhs.when
-    2     elseif rhs.when then
+    6     elseif rhs.when then
 ****0       when = rhs.when / variables
           end
-    4     local result = Theorem {
-    2       variables = all_variables (lhs),
-    2       when = when,
-    2       [1]  = lhs [1],
-    2       [2]  = rhs [2] / variables,
+   12     local result = Theorem {
+    6       variables = all_variables (lhs),
+    6       when = when,
+    6       [1]  = lhs [1],
+    6       [2]  = rhs [2] / variables,
           }
-    2     return result
+    6     return result
         else
 ****0     return nil, "lhs [2] ~= rhs [1]"
         end
       end
 
-    2 function Theorem.substitutivity (operation, operands)
-    8   assert (getmetatable (operation) == Adt.Operation,
-    4           "operation must be an operation")
-    8   assert (type (operands) == "table",
-    4           "operands must be a table")
-    8   Fun.frommap (operands)
-    4     : each (function (k, v)
-    8               assert (getmetatable (v) == Theorem,
-    4                       tostring (k) .. " must be a theorem")
+    8 function Theorem.substitutivity (operation, operands)
+   30   assert (getmetatable (operation) == Adt.Operation,
+   15           "operation must be an operation")
+   30   assert (type (operands) == "table",
+   15           "operands must be a table")
+   30   Fun.frommap (operands)
+   15     : each (function (k, v)
+   30               assert (getmetatable (v) == Theorem,
+   15                       tostring (k) .. " must be a theorem")
                   end)
         -- TODO
-    4   local variables = {}
-    8   Fun.frommap (operands)
-    8     : each (function (_,v) all_variables (v, variables) end)
-    4   local  lhs = operands [1][1]
-    4   local  rhs = operands [1][2]
-    4   local when = lhs.when and rhs.when
-    4   return Theorem {
-    4     variables = variables,
-    4     when = when,
-    4     [1]  = operation (lhs),
+   15   local variables = {}
+   30   Fun.frommap (operands)
+   30     : each (function (_,v) all_variables (v, variables) end)
+   15   local  lhs = operands [1][1]
+   15   local  rhs = operands [1][2]
+   15   local when = lhs.when and rhs.when
+   15   return Theorem {
+   15     variables = variables,
+   15     when = when,
+   15     [1]  = operation (lhs),
           [2]  = operation (rhs),
         }
       end
 
-    2 function Theorem.substitution (theorem, variable, replacement)
-   18   assert (getmetatable (theorem) == Theorem,
-    9           "theorem must be a theorem")
-   18   assert (getmetatable (variable) == Adt.Variable,
-    9           "variable must be a variable")
-   18   assert (getmetatable (replacement) == Adt.Term or getmetatable (replacement) == Adt.Variable,
-    9           "replacement must be a term or a variable")
-   18   assert (variable [Adt.Sort] == replacement [Adt.Sort],
-    9           "variable and replacement must be of the same sort")
+    8 function Theorem.substitution (theorem, variable, replacement)
+   54   assert (getmetatable (theorem) == Theorem,
+   27           "theorem must be a theorem")
+   54   assert (getmetatable (variable) == Adt.Variable,
+   27           "variable must be a variable")
+   54   assert (getmetatable (replacement) == Adt.Term or getmetatable (replacement) == Adt.Variable,
+   27           "replacement must be a term or a variable")
+   54   assert (variable [Adt.Sort] == replacement [Adt.Sort],
+   27           "variable and replacement must be of the same sort")
         -- TODO
-    9   local lhs = theorem [1]
-    9   local rhs = theorem [2]
-    9   local mapping = {}
-    9   mapping [variable] = replacement
-    9   lhs = lhs / mapping
-    9   rhs = rhs / mapping
-    9   local when = lhs.when and rhs.when
-   18   return Theorem {
-    9     variables = all_variables (theorem),
-    9     when = when,
-    9     [1]  = lhs,
-    9     [2]  = rhs,
+   27   local lhs = theorem [1]
+   27   local rhs = theorem [2]
+   27   local mapping = {}
+   27   mapping [variable] = replacement
+   27   lhs = lhs / mapping
+   27   rhs = rhs / mapping
+   27   local when = lhs.when and rhs.when
+   54   return Theorem {
+   27     variables = all_variables (theorem),
+   27     when = when,
+   27     [1]  = lhs,
+   27     [2]  = rhs,
         }
       end
 
-    2 function Theorem.cut (theorem, replacement)
-    2   assert (getmetatable (theorem) == Theorem,
-    1           "theorem must be a term")
-    2   assert (getmetatable (replacement) == Theorem,
-    1           "replacement must be a theorem")
+    8 function Theorem.cut (theorem, replacement)
+    8   assert (getmetatable (theorem) == Theorem,
+    4           "theorem must be a term")
+    8   assert (getmetatable (replacement) == Theorem,
+    4           "replacement must be a theorem")
         -- TODO
-    1   if not theorem.when then
+    4   if not theorem.when then
 ****0     return nil
         end
-    2   local search = Boolean.Equals {
-    1     replacement [1],
+    8   local search = Boolean.Equals {
+    4     replacement [1],
           replacement [2]
-    1   }
-    1   local replaced = false
+    4   }
+    4   local replaced = false
         local function replace(term)
-    1     if getmetatable (term) == Adt.Variable then
+    4     if getmetatable (term) == Adt.Variable then
 ****0       return term
           end
-    1     local ok, map = Adt.Term.equivalence (term, search)
-    1     if ok then
-    1       replaced = true
+    4     local ok, map = Adt.Term.equivalence (term, search)
+    4     if ok then
+    4       replaced = true
             return replacement.when
-    1          and replacement.when / map
-    1           or Boolean.True {}
+    4          and replacement.when / map
+    4           or Boolean.True {}
           else
 ****0       return term [Adt.Operation] (Fun.frommap (term)
 ****0         : filter (function (k, _) return type (k) ~= "table" end)
@@ -828,52 +828,52 @@
 ****0         : tomap  ())
           end
         end
-    1   local result = replace (theorem.when)
-    1   if not replaced then
+    4   local result = replace (theorem.when)
+    4   if not replaced then
 ****0     return nil
         end
-    2   return Theorem {
-    1     variables = all_variables (theorem),
-    1     when = result,
-    1     [1] = theorem [1],
-    1     [2] = theorem [2],
+    8   return Theorem {
+    4     variables = all_variables (theorem),
+    4     when = result,
+    4     [1] = theorem [1],
+    4     [2] = theorem [2],
         }
       end
 
-    2 function Theorem.inductive (conjecture, variable, t)
-    4   assert (getmetatable (conjecture) == Conjecture,
-    2           "conjecture must be a conjecture")
-    4   assert (getmetatable (variable) == Adt.Variable,
-    2           "variable must be a variable")
-    2   assert (type (t) == "table")
-    4   local generators = Fun.frommap (variable [Adt.Sort])
-   50     : filter (function (_, v) return getmetatable (v) == Adt.Operation and v [Adt.generator] end)
-    2   local result  = Theorem.conjecture (conjecture)
-    2   local missing = {}
-    8   generators:filter (function (key)
-    4     return type (t [key]) ~= "function"
-   10   end):map (function (k) return tostring (k) end):totable ()
-    2   if #missing ~= 0 then
+    8 function Theorem.inductive (conjecture, variable, t)
+   14   assert (getmetatable (conjecture) == Conjecture,
+    7           "conjecture must be a conjecture")
+   14   assert (getmetatable (variable) == Adt.Variable,
+    7           "variable must be a variable")
+    7   assert (type (t) == "table")
+   14   local generators = Fun.frommap (variable [Adt.Sort])
+  143     : filter (function (_, v) return getmetatable (v) == Adt.Operation and v [Adt.generator] end)
+    7   local result  = Theorem.conjecture (conjecture)
+    7   local missing = {}
+   28   generators:filter (function (key)
+   14     return type (t [key]) ~= "function"
+   35   end):map (function (k) return tostring (k) end):totable ()
+    7   if #missing ~= 0 then
 ****0     return nil, table.concat (missing, ", ")
         end
-    4   if generators:all (function (_, operation)
-    4     local var       = result.variables [variable]
-   16     local operands  = Fun.frommap (operation)
-   18       : filter (function (k) return type (k) ~= "table" end)
-    6       : map    (function (k) return k, var end)
-    4       : tomap  ()
-    4     local successor = Theorem.substitution (result, var, operation (operands))
-    4     local proved    = t [operation] (result)
-    2     return getmetatable (proved) == Theorem
-    2        and proved == successor
-    2   end) then
+   14   if generators:all (function (_, operation)
+   11     local var       = result.variables [variable]
+   44     local operands  = Fun.frommap (operation)
+   51       : filter (function (k) return type (k) ~= "table" end)
+   18       : map    (function (k) return k, var end)
+   11       : tomap  ()
+   11     local successor = Theorem.substitution (result, var, operation (operands))
+   11     local proved    = t [operation] (result)
+    4     return getmetatable (proved) == Theorem
+    4        and proved == successor
+    7   end) then
 ****0     return result
         else
 ****0     return nil
         end
       end
 
-    2 return Theorem
+    8 return Theorem
 
 ==============================================================================
 Summary
