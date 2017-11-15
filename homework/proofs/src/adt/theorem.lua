@@ -273,8 +273,8 @@ function Theorem.cut (theorem, replacement)
     if getmetatable (term) == Adt.Variable then
       return term
     end
-    local equiv, map = Adt.Term.Equivalence (term, search)
-    if equiv then
+    local ok, map = Adt.Term.equivalence (term, search)
+    if ok then
       replaced = true
       return replacement.when
          and replacement.when / map
@@ -283,7 +283,7 @@ function Theorem.cut (theorem, replacement)
       return term [Adt.Operation] (Fun.frommap (term)
         : filter (function (k, _) return type (k) ~= "table" end)
         : map    (function (k, t) return k, replace (t) end)
-        : tomap ())
+        : tomap  ())
     end
   end
   local result = replace (theorem.when)
