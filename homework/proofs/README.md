@@ -18,9 +18,8 @@ Install also an additional library but running in a terminal the command:
 
 You have to complete programs to check proofs on ADTs:
 
-* write axioms for all operations in `adt/boolean.lua`;
-* write axioms for all operations in `adt/natural.lua`;
-* complete code in `adt/init.lua`.
+* complete code in `adt/theorem.lua`;
+* complete tests in `adt/proof_spec.lua`.
 
 You must only implement parts shown by `TODO` comments in the source code.
 Do **not** touch other algorithms.
@@ -28,9 +27,9 @@ You are allowed to add extra functions if needed.
 
 At the beginning, you already have:
 
-* a representation for Algebraic Abstract Data Types (with tests);
+* a representation for algebraic abstract data types (with tests);
 * a representation for conjectures and theorems;
-* parts of the Boolean and Natural data types.
+* the Boolean and Natural data types.
 
 ## Comments on Code
 

@@ -1,0 +1,625 @@
+==============================================================================
+./src/graph/coverability.lua
+==============================================================================
+     3 local Fun     = require "fun"
+     3 local Graph   = require "graph"
+     3 local Marking = require "marking"
+
+     3 local Coverability = {}
+
+     3 function Coverability.create (t)
+    18   t = t or {
+    12     traversal = Graph.depth_first,
+    12   }
+    18   assert (type (t) == "table")
+    18   assert (type (t.traversal) == "function")
+    36   return Graph.create {
+    18     traversal = t.traversal,
+           omegize   = function (x) -- TODO
+    72         if x.parent.marking <= x.current.marking then
+   108           Fun.each (function(place)
+   153             if (type (x.current.marking[place]) == "number"
+    99                 and   x.current.marking[place]  >  x.parent.marking[place])
+   129             or (type (x.current.marking[place]) ~= "number"
+    54                 and   x.current.marking[place]  ~= Marking.omega)
+                   then
+    24               x.current.marking[place] = Marking.omega
+                   end
+   207           end, x.current.petrinet:places ())
+               end
+           end
+         }
+       end
+
+     3 return Coverability
+
+==============================================================================
+./src/graph/init.lua
+==============================================================================
+     6 local Fun      = require "fun"
+     6 local Petrinet = require "petrinet"
+     6 local State    = require "state"
+
+     6 local Graph   = {}
+     6 Graph.__index = Graph
+
+     6 function Graph.create (t)
+    36   assert (type (t) == "table")
+    36   assert (type (t.omegize  ) == "function")
+    36   assert (type (t.traversal) == "function")
+    72   return setmetatable ({
+    36     omegize   = t.omegize,
+    36     traversal = t.traversal,
+    72   }, Graph)
+       end
+
+     6 function Graph.depth_first (work)
+   168   local result = work [#work]
+   168   work [#work] = nil
+   168   return result
+       end
+
+     6 function Graph.breadth_first (work)
+    21   local result = work [1]
+    21   table.remove (work, 1)
+    21   return result
+       end
+
+     6 function Graph.__call (graph, petrinet)
+    24   assert (getmetatable (petrinet) == Petrinet)
+    24   local initial = State.create (petrinet)
+    24   local work    = { initial }
+    24   local states  = { initial }
+   213   while #work ~= 0 do
+   189     local state = graph.traversal (work)
+   543     for _, transition in state:enabled () do
+   354       local successor = state (transition)
+   708       graph.omegize {
+   354         current = successor,
+   354         initial = initial,
+   354         parent  = state,
+   354         states  = states,
+             }
+   708       if not Fun.any (function (s)
+  2893         return s.marking == successor.marking
+   708       end, states) then
+   165         states [#states+1] = successor
+   165         work   [#work  +1] = successor
+             end
+   708       state.successors [transition] = Fun.totable (Fun.filter (function (s)
+  3931         return s.marking == successor.marking
+   708       end, states)) [1]
+           end
+         end
+    24   return initial, states
+       end
+
+     6 return Graph
+
+==============================================================================
+./src/graph/reachability.lua
+==============================================================================
+     3 local Graph = require "graph"
+
+     3 local Reachability = {}
+
+     3 function Reachability.create (t)
+    18   t = t or {
+    12     traversal = Graph.depth_first,
+    12   }
+    18   assert (type (t) == "table")
+    18   assert (type (t.traversal) == "function")
+    36   return Graph.create {
+    18     traversal = t.traversal,
+   300     omegize   = function () end,
+         }
+       end
+
+     3 return Reachability
+
+==============================================================================
+./src/marking/init.lua
+==============================================================================
+    12 local Fun      = require "fun"
+    12 local Petrinet = require "petrinet"
+    12 local Marking  = {}
+
+    24 Marking.omega  = setmetatable ({}, {
+    12   __tostring = function () return "ω" end,
+    12 })
+
+    12 function Marking.initial (petrinet)
+    60   assert (getmetatable (petrinet) == Petrinet)
+   180   return setmetatable (Fun.tomap (Fun.map (function (place)
+   237     return place, place.marking
+   180   end, petrinet:places ())), Marking)
+       end
+
+    12 function Marking.create (t)
+   789   assert (type (t) == "table")
+  1578   assert (Fun.all (function (place, valuation)
+  5301     return getmetatable (place) == Petrinet.Place
+  5301        and (type (valuation) == "number" and valuation >= 0)
+  5301         or valuation == Marking.omega
+   789   end, Fun.frommap (t)))
+   789   return setmetatable (Fun.tomap (Fun.frommap (t)), Marking)
+       end
+
+    12 function Marking.__eq (lhs, rhs)
+  6692   assert (getmetatable (lhs) == Marking)
+  6692   assert (getmetatable (rhs) == Marking)
+ 13384   return Fun.all (function (place, valuation)
+ 14504        return rhs [place] == valuation
+  6692      end, Fun.frommap (lhs))
+  7088      and Fun.all (function (place, valuation)
+  2773        return lhs [place] == valuation
+  7088      end, Fun.frommap (rhs))
+       end
+
+    12 function Marking.__le (lhs, rhs)
+    99   assert (getmetatable (lhs) == Marking)
+    99   assert (getmetatable (rhs) == Marking)
+   198   return Fun.all (function (place, valuation)
+   227     local r = rhs [place]
+   227     if not r then
+     6       return false
+   221     elseif r == Marking.omega   and valuation == Marking.omega   then
+    58       return true
+   163     elseif r == Marking.omega   and type (valuation) == "number" then
+*****0       return true
+   163     elseif type (r) == "number" and type (valuation) == "number" then
+   163       return valuation <= r
+*****0     elseif type (r) == "number" and valuation == Marking.omega   then
+*****0       return false
+           end
+    99   end, lhs)
+       end
+
+    12 function Marking.__lt (lhs, rhs)
+    15   assert (getmetatable (lhs) == Marking)
+    15   assert (getmetatable (rhs) == Marking)
+    15   return lhs ~= rhs
+    15      and lhs <= rhs
+       end
+
+    12 function Marking.__add (lhs, rhs)
+   366   local data = {}
+  2955   for k, v in pairs (lhs) do
+  2589     data [k] = v
+         end
+   828   for k, v in pairs (rhs) do
+   462     if data [k] == Marking.omega
+   435     or v        == Marking.omega then
+    27       data [k] = Marking.omega
+           else
+   435       data [k] = (data [k] or 0) + v
+           end
+         end
+   366   return Marking.create (data)
+       end
+
+    12 function Marking.__sub (lhs, rhs)
+   366   local data = {}
+  2955   for k, v in pairs (lhs) do
+  2589     data [k] = v
+         end
+   861   for k, v in pairs (rhs) do
+   495     if data [k] == Marking.omega
+   468     or v        == Marking.omega then
+    27       data [k] = Marking.omega
+           else
+   468       data [k] = (data [k] or 0) - v
+           end
+         end
+   366   return Marking.create (data)
+       end
+
+    12 return Marking
+
+==============================================================================
+./src/petrinet/init.lua
+==============================================================================
+    15 local Fun = require "fun"
+
+    15 local Petrinet = {}
+
+    15 Petrinet.Place      = {}
+    15 Petrinet.Transition = {}
+    15 Petrinet.Arc        = {}
+
+    15 Petrinet           .__index = Petrinet
+    15 Petrinet.Place     .__index = Petrinet.Place
+    15 Petrinet.Transition.__index = Petrinet.Transition
+    15 Petrinet.Arc       .__index = Petrinet.Arc
+
+    15 function Petrinet.create ()
+    66   return setmetatable ({}, Petrinet)
+       end
+
+    15 function Petrinet.place (petrinet, marking)
+   198   assert (getmetatable (petrinet) == Petrinet)
+   198   assert (marking == nil or (type (marking) == "number" and marking >= 0))
+   396   return setmetatable ({
+   198     marking = marking or 0,
+   396   }, Petrinet.Place)
+       end
+
+    30 function Petrinet.Place.__sub (place, valuation)
+   144   assert (getmetatable (place) == Petrinet.Place)
+   144   assert (type (valuation) == "number")
+   144   assert (valuation > 0)
+   288   return setmetatable ({
+   144     type      = "pre",
+   144     place     = place,
+   144     valuation = valuation,
+   288   }, Petrinet.Arc)
+       end
+
+    30 function Petrinet.Place.__add (place, valuation)
+   135   assert (getmetatable (place) == Petrinet.Place)
+   135   assert (type (valuation) == "number")
+   135   assert (valuation > 0)
+   270   return setmetatable ({
+   135     type      = "post",
+   135     place     = place,
+   135     valuation = valuation,
+   270   }, Petrinet.Arc)
+       end
+
+    15 function Petrinet.transition (petrinet, t)
+   102   assert (getmetatable (petrinet) == Petrinet)
+   102   assert (type (t) == "table")
+   204   assert (Fun.all (function (_, arc)
+   279     return getmetatable (arc) == Petrinet.Arc
+   102   end, Fun.frommap (t)))
+   102   return setmetatable (Fun.tomap (Fun.frommap (t)), Petrinet.Transition)
+       end
+
+    15 function Petrinet.places (petrinet)
+   120   assert (getmetatable (petrinet) == Petrinet)
+   240   return Fun.map (function (_, place)
+   402     return place
+   240   end, Fun.filter (function (_, place)
+   699     return getmetatable (place) == Petrinet.Place
+   120   end, Fun.frommap (petrinet)))
+       end
+
+    15 function Petrinet.transitions (petrinet)
+   567   assert (getmetatable (petrinet) == Petrinet)
+  1134   return Fun.map (function (_, transition)
+  3159     return transition
+  1134   end, Fun.filter (function (_, transition)
+  7086     return getmetatable (transition) == Petrinet.Transition
+   567   end, Fun.frommap (petrinet)))
+       end
+
+    30 function Petrinet.Transition.pre (transition)
+  3516   assert (getmetatable (transition) == Petrinet.Transition)
+  7032   return Fun.map (function (_, arc)
+  4395     return arc
+  7032   end, Fun.filter (function (_, arc)
+  6825     return getmetatable (arc) == Petrinet.Arc and arc.type == "pre"
+  3516   end, Fun.frommap (transition)))
+       end
+
+    30 function Petrinet.Transition.post (transition)
+   369   assert (getmetatable (transition) == Petrinet.Transition)
+   738   return Fun.map (function (_, arc)
+   462     return arc
+   738   end, Fun.filter (function (_, arc)
+   957     return getmetatable (arc) == Petrinet.Arc and arc.type == "post"
+   369   end, Fun.frommap (transition)))
+       end
+
+    15 return Petrinet
+
+==============================================================================
+./src/petrinet/page24.lua
+==============================================================================
+     3 local Petrinet = require "petrinet"
+
+       return function (n)
+     3   local result = Petrinet.create ()
+    12   for i = 1, n do
+     9     local id = tostring (i)
+     9     result ["fork-"     .. id] = result:place (1)
+     9     result ["thinking-" .. id] = result:place (1)
+     9     result ["waiting-"  .. id] = result:place (0)
+     9     result ["eating-"   .. id] = result:place (0)
+         end
+    12   for i = 1, n do
+     9     local id   = tostring (i)
+     9     local next = tostring (i < n and i + 1 or 1)
+    18     result ["t1-" .. id] = result:transition {
+     9       result ["fork-"     .. id] - 1,
+     9       result ["thinking-" .. id] - 1,
+     9       result ["waiting-"  .. id] + 1,
+    18     }
+    18     result ["t2-" .. id] = result:transition {
+     9       result ["waiting-" .. id  ] - 1,
+     9       result ["fork-"    .. next] - 1,
+     9       result ["eating-"  .. id  ] + 1,
+    18     }
+    18     result ["t3-" .. id] = result:transition {
+     9       result ["eating-"   .. id  ] - 1,
+     9       result ["fork-"     .. id  ] + 1,
+     9       result ["fork-"     .. next] + 1,
+     9       result ["thinking-" .. id  ] + 1,
+    18     }
+         end
+     3   return result
+       end
+
+==============================================================================
+./src/petrinet/page47.lua
+==============================================================================
+     6 local Petrinet = require "petrinet"
+     6 local result   = Petrinet.create ()
+
+     6 result.p1 = result:place (1)
+     6 result.p2 = result:place (1)
+     6 result.p3 = result:place (0)
+     6 result.p4 = result:place (0)
+     6 result.p5 = result:place (0)
+    12 result.t1 = result:transition {
+     6   result.p1 - 1,
+     6   result.p3 + 1,
+    12 }
+    12 result.t2 = result:transition {
+     6   result.p2 - 1,
+     6   result.p4 + 1,
+    12 }
+    12 result.t3 = result:transition {
+     6   result.p2 - 1,
+     6   result.p3 - 1,
+     6   result.p5 + 1,
+    12 }
+
+     6 return result
+
+==============================================================================
+./src/petrinet/page90.lua
+==============================================================================
+     3 local Petrinet = require "petrinet"
+     3 local result   = Petrinet.create ()
+
+     3 result.p1 = result:place (1)
+     3 result.p2 = result:place (0)
+     3 result.p3 = result:place (1)
+     6 result.t1 = result:transition {
+     3   result.p1 - 1,
+     3   result.p1 + 1,
+     3   result.p2 + 1,
+     6 }
+     6 result.t2 = result:transition {
+     3   result.p2 - 1,
+     3   result.p3 + 1,
+     6 }
+     6 result.t3 = result:transition {
+     3   result.p3 - 1,
+     6 }
+
+     3 return result
+
+==============================================================================
+./src/petrinet/page92.lua
+==============================================================================
+     3 local Petrinet = require "petrinet"
+     3 local result   = Petrinet.create ()
+
+     3 result.p1 = result:place (1)
+     3 result.p2 = result:place (0)
+     3 result.p3 = result:place (0)
+     3 result.p4 = result:place (0)
+     6 result.t1 = result:transition {
+     3   result.p1 - 1,
+     3   result.p1 + 1,
+     3   result.p2 + 1,
+     6 }
+     6 result.t2 = result:transition {
+     3   result.p1 - 1,
+     3   result.p3 + 1,
+     6 }
+     6 result.t3 = result:transition {
+     3   result.p2 - 1,
+     3   result.p3 - 1,
+     3   result.p3 + 1,
+     3   result.p4 + 1,
+     6 }
+     6 result.t4 = result:transition {
+     3   result.p3 - 1,
+     3   result.p4 - 1,
+     3   result.p1 + 1,
+     6 }
+
+     3 return result
+
+==============================================================================
+./src/petrinet/page95.lua
+==============================================================================
+     3 local Petrinet = require "petrinet"
+     3 local result   = Petrinet.create ()
+
+     3 result.p1 = result:place (1)
+     6 result.t1 = result:transition {
+     3   result.p1 - 1,
+     3   result.p1 + 3,
+     6 }
+
+     3 return result
+
+==============================================================================
+./src/petrinet/paper.lua
+==============================================================================
+     3 local Petrinet = require "petrinet"
+     3 local result   = Petrinet.create ()
+
+     3 result.up      = result:place (1)
+     3 result.down    = result:place (0)
+     3 result.on      = result:place (1)
+     3 result.off     = result:place (0)
+     3 result.fuel    = result:place (2)
+     3 result.filled  = result:place (0)
+     3 result.maximum = result:place (2)
+     6 result.press  = result:transition {
+     3   result.up   - 1,
+     3   result.down + 1,
+     6 }
+     6 result.release  = result:transition {
+     3   result.up   + 1,
+     3   result.down - 1,
+     6 }
+     6 result.start  = result:transition {
+     3   result.off - 1,
+     3   result.on  + 1,
+     6 }
+     6 result.stop  = result:transition {
+     3   result.off + 1,
+     3   result.on  - 1,
+     6 }
+     6 result.fill  = result:transition {
+     3   result.down    - 1,
+     3   result.down    + 1,
+     3   result.on      - 1,
+     3   result.on      + 1,
+     3   result.fuel    - 1,
+     3   result.maximum - 1,
+     3   result.filled  + 1,
+     6 }
+     6 result.empty  = result:transition {
+     3   result.on      - 1,
+     3   result.on      + 1,
+     3   result.maximum + 1,
+     3   result.filled  - 1,
+     6 }
+
+     3 return result
+
+==============================================================================
+./src/state/init.lua
+==============================================================================
+     9 local Fun      = require "fun"
+     9 local Petrinet = require "petrinet"
+     9 local Marking  = require "marking"
+
+     9 local State = {}
+     9 State.__index = State
+
+     9 function State.create (petrinet)
+    42   assert (getmetatable (petrinet) == Petrinet)
+    84   local result = setmetatable ({
+    42     petrinet   = petrinet,
+    42     marking    = Marking.initial (petrinet),
+    42     successors = {},
+    42   }, State)
+    42   return result
+       end
+
+     9 function State.__call (state, transition)
+   369   assert (getmetatable (state)      == State)
+   369   assert (getmetatable (transition) == Petrinet.Transition)
+   369   local transitions = Fun.tomap (state:enabled ())
+   369   if transitions[transition] == nil then
+     6     return nil, "transition not enabled"
+         end
+   363   local pre  = {} -- TODO
+   852   for _,arc in transition:pre  () do  pre [arc.place] = arc.valuation end
+   363   local post = {} -- TODO
+   819   for _,arc in transition:post () do post [arc.place] = arc.valuation end
+   726   return setmetatable ({
+   363     petrinet   = state.petrinet,
+   363     marking    = state.marking - pre + post,
+   363     successors = {},
+   726   }, State)
+       end
+
+     9 function State.enabled (state)
+   561   assert (getmetatable (state) == State) -- TODO
+   561   local transitions = {}
+  3708   for _,transition in state.petrinet:transitions () do
+  3147     assert (getmetatable (transition) == Petrinet.Transition)
+  6294     local enabled = Fun.all (function (arc)
+  3900       return assert (getmetatable (arc) == Petrinet.Arc)
+  3900          and assert (type (arc.valuation)      == "number" and arc.valuation >= 0)
+  3900          and assert (type (arc.place.marking)  == "number" and arc.place.marking >= 0)
+  3900          and ((type (state.marking[arc.place]) == "number"
+  3801                 and  state.marking[arc.place]  >= arc.valuation)
+  3900               or state.marking[arc.place] == Marking.omega)
+  3147     end,   transition:pre ())
+  3147     if enabled then
+  1203       transitions[transition] = transition
+           end
+         end
+   561   return Fun.iter (transitions)
+       end
+
+       local function sort (lhs, rhs)
+    27   if type (lhs) == type (rhs) then
+    27     return lhs < rhs
+         else
+*****0     return type (lhs) < type (rhs)
+         end
+       end
+
+       local function goes_to (current, final, path)
+     6   if current == final then
+*****0     return true
+     6   elseif path [current] then
+*****0     return false
+         end
+     6   local result   = false
+     6   path [current] = true
+     6   for _, child in pairs (current.successors) do
+*****0     result = result or goes_to (child, final, path)
+         end
+     6   path [current] = nil
+     6   return result
+       end
+
+     9 function State.__le (lhs, rhs)
+     3   return goes_to (lhs, rhs, {})
+       end
+
+     9 function State.__lt (lhs, rhs)
+     3   return lhs ~= rhs and goes_to (lhs, rhs, {})
+       end
+
+     9 function State.__tostring (state)
+     3   assert (getmetatable (state) == State)
+     3   local places = {}
+     6   local names  = Fun.totable (Fun.map (function (place, marking)
+    74     for k, v in pairs (state.petrinet) do
+    74       if v == place then
+    15         places [k] = marking
+    15         return k
+             end
+           end
+     3   end, Fun.frommap (state.marking)))
+     3   table.sort (names, sort)
+     9   return table.concat (Fun.totable (Fun.map (function (name)
+    15     return tostring (name) .. "=" .. tostring (places [name])
+     9   end, names)), ",")
+       end
+
+     9 return State
+
+==============================================================================
+Summary
+==============================================================================
+
+File                         Hits Missed Coverage
+-------------------------------------------------
+./src/graph/coverability.lua 21   0      100.00%
+./src/graph/init.lua         45   0      100.00%
+./src/graph/reachability.lua 12   0      100.00%
+./src/marking/init.lua       67   3      95.71%
+./src/petrinet/init.lua      71   0      100.00%
+./src/petrinet/page24.lua    28   0      100.00%
+./src/petrinet/page47.lua    21   0      100.00%
+./src/petrinet/page90.lua    18   0      100.00%
+./src/petrinet/page92.lua    27   0      100.00%
+./src/petrinet/page95.lua    8    0      100.00%
+./src/petrinet/paper.lua     41   0      100.00%
+./src/state/init.lua         71   4      94.67%
+-------------------------------------------------
+Total                        430  7      98.40%

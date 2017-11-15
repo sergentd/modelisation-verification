@@ -18,25 +18,28 @@ function Natural.nth (n)
        : reduce (function (i) return Natural.Successor { i } end, Natural.Zero {})
 end
 
+-- Increment
 Natural [Adt.axioms].increment = Adt.axiom {
   Natural.Increment { Natural._v },
   Natural.Successor { Natural._v },
 }
-Natural [Adt.axioms].decrement_zero = Adt.axiom {
-  Natural.Decrement { Natural.Zero {} },
-  Natural.Zero {}
+
+-- Decrement
+Natural [Adt.axioms].decrement = Adt.axiom {
+  Natural.Decrement { Natural.Successor { Natural._v } },
+  Natural._v,
 }
-Natural [Adt.axioms].decrement_nonzero = Adt.axiom {
-  Natural.Decrement { Natural.Successor{ Natural._x } },
-  Natural._x
-}
+
+-- Addition
+
 Natural [Adt.axioms].addition_zero = Adt.axiom {
   Natural.Addition { Natural._x, Natural.Zero {} },
   Natural._x,
 }
+
 Natural [Adt.axioms].addition_nonzero = Adt.axiom {
   Natural.Addition  { Natural._x, Natural.Successor { Natural._y } },
-  Natural.Successor { Natural.Addition { Natural._x, Natural._y} },
+  Natural.Successor { Natural.Addition { Natural._x, Natural._y } },
 }
 Natural [Adt.axioms].subtraction_zero = Adt.axiom {
   Natural.Subtraction { Natural._x, Natural.Zero {} },
@@ -53,6 +56,29 @@ Boolean [Adt.axioms].is_even_zero = Adt.axiom {
 Boolean [Adt.axioms].is_even_nonzero = Adt.axiom {
   Boolean.Is_even { Natural._x },
   Boolean.Not { Boolean.Is_even { Natural.Decrement { Natural._x } } }
+}
+
+-- Substraction
+Natural [Adt.axioms].v_substraction_zero = Adt.axiom {
+  Natural.Subtraction { Natural._v, Natural.Zero {} },
+  Natural._v,
+}
+
+Natural [Adt.axioms].sx_substraction_sy = Adt.axiom {
+  Natural.Subtraction { Natural.Successor { Natural._x },
+                        Natural.Successor { Natural._y } },
+  Natural.Subtraction { Natural._x, Natural._y },
+}
+
+-- Is_even
+Natural [Adt.axioms].is_even_zero = Adt.axiom {
+  Boolean.Is_even { Natural.Zero {} },
+  Boolean.True {},
+}
+
+Natural [Adt.axioms].is_even_sv = Adt.axiom {
+  Boolean.Is_even { Natural.Successor { Natural._v } },
+  Boolean.Not { Boolean.Is_even { Natural._v } },
 }
 
 return Natural

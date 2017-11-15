@@ -122,7 +122,7 @@ by running frequently:
 The source files are located within: `homework/petrinets/`.
 You have to write code where `TODO` are located.
 Do **not** touch the existing code or tests,
-but you can add your own tests in addition.
+but you can add your own tests in addition **in a new `_spec` file**.
 
 The deadline is 11 october 2017 at 23:59.
 We will clone all your repositories using a script,
@@ -161,10 +161,10 @@ Evaluation will be:
 
 ### Homework #2
 
-The source files are located within: `homework/proofs/`.
+The source files are located within: `homework/adts/`.
 You have to write code where `TODO` are located.
 Do **not** touch the existing code or tests,
-but you can add your own tests in addition.
+but you can add your own tests in addition **in a new `_spec` file**.
 
 The deadline is 11 october 2017 at 23:59.
 We will clone all your repositories using a script,
@@ -203,5 +203,46 @@ Evaluation will be:
 | ----- |
 |  5.75 |
 
-Auto-eval TP2 : 5.0
+### Homework #3
 
+The source files are located within: `homework/proofs/`.
+You have to write code where `TODO` are located.
+Do **not** touch the existing code or tests,
+but you can add your own tests in addition **in a new `_spec` file**.
+
+The deadline is 15 november 2017 at 23:59.
+We will clone all your repositories using a script,
+so make sure that @saucisson and @mencattini have read access.
+
+Please install dependencies by running:
+
+```sh
+luarocks install rockspec/fun-scm-1.rockspec
+luarocks install rockspec/hashids-scm-1.rockspec
+```
+
+Evaluation will be:
+
+* do you have done anything at the deadline?
+  (yes: 1 point, no: 0 point)
+  * [ ] Done anything
+* do you have understood and implemented all the required notions?
+  (all: 4 points, none: 0 point)
+  * [ ] Substitutivity
+  * [ ] Substitution
+  * [ ] Cut
+  * [ ] Proof that `x+y = y+x`
+* do you have understood and implemented corners cases of all the required
+  (all: 1 point, none: 0 point)
+  * [ ] Substitutivity
+  * [ ] Substitution
+  * [ ] Cut
+* do you have correctly written and tested your code?
+  (no: -0.5 point for each)
+  * [ ] Coding standards
+  * [ ] Tests
+  * [ ] Code coverage
+
+| Grade |
+| ----- |
+|       |
