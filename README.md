@@ -136,7 +136,7 @@ luarocks install rockspec/fun-scm-1.rockspec
 
 Evaluation will be:
 
-* do you have done anything at the deadline?
+* have you done anything at the deadline?
   (yes: 1 point, no: 0 point)
   * [x] Done anything
 * do you have understood and implemented all the required notions?
@@ -179,7 +179,7 @@ luarocks install rockspec/hashids-scm-1.rockspec
 
 Evaluation will be:
 
-* do you have done anything at the deadline?
+* have you done anything at the deadline?
   (yes: 1 point, no: 0 point)
   * [x] Done anything
 * do you have understood and implemented all the required notions?
@@ -223,7 +223,7 @@ luarocks install rockspec/hashids-scm-1.rockspec
 
 Evaluation will be:
 
-* do you have done anything at the deadline?
+* have you done anything at the deadline?
   (yes: 1 point, no: 0 point)
   * [ ] Done anything
 * do you have understood and implemented all the required notions?
@@ -237,6 +237,46 @@ Evaluation will be:
   * [ ] Substitutivity
   * [ ] Substitution
   * [ ] Cut
+* do you have correctly written and tested your code?
+  (no: -0.5 point for each)
+  * [ ] Coding standards
+  * [ ] Tests
+  * [ ] Code coverage
+
+| Grade |
+| ----- |
+|       |
+
+### Homework #4
+
+
+The source files are located within: `homework/rewriting/`.
+You have to write code where `TODO` are located.
+Do **not** touch the existing code or tests,
+but you can add your own tests in addition **in a new `_spec` file**.
+
+The deadline is 29 november 2017 at 23:59.
+We will clone all your repositories using a script,
+so make sure that @saucisson and @mencattini have read access.
+
+Please install dependencies by running:
+
+```sh
+luarocks install rockspec/fun-scm-1.rockspec
+luarocks install rockspec/hashids-scm-1.rockspec
+```
+
+Evaluation follows the questions:
+
+* have you done anything at the deadline?
+  (yes: 1 point, no: 0 point)
+  * [ ] Done anything
+* do you have understood and implemented all the required notions?
+  (all: 4 points, none: 0 point)
+  * [ ] Rewrite rules in specs
+  * [ ] Strategies
+* do you have defined an adt that really tests the strategies?
+  (yes: 2 point)
 * do you have correctly written and tested your code?
   (no: -0.5 point for each)
   * [ ] Coding standards
