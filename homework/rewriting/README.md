@@ -1,6 +1,6 @@
-# Modeling & Verification Homework #3
+# Modeling & Verification Homework #4
 
-This repository is the starter for homework #3 of the course
+This repository is the starter for homework #4 of the course
 ["Modeling & Verification"](https://moodle.unige.ch/course/view.php?id=183)
 at [University of Geneva](http://www.unige.ch).
 
@@ -18,8 +18,12 @@ Install also an additional library but running in a terminal the command:
 
 You have to complete programs to check proofs on ADTs:
 
-* complete code in `adt/theorem.lua`;
-* complete tests in `adt/proof_spec.lua`.
+* write rules for all operations in `adt/boolean.lua`;
+* write rules for all operations in `adt/natural.lua`;
+* complete strategy generators in `adt/init.lua`;
+* create an ADT that will test correctly all the strategies;
+  it must be non-confluent to allow your tests to distinguish `innermost`
+  and `outermost` for instance.
 
 You must only implement parts shown by `TODO` comments in the source code.
 Do **not** touch other algorithms.
@@ -27,9 +31,10 @@ You are allowed to add extra functions if needed.
 
 At the beginning, you already have:
 
-* a representation for algebraic abstract data types (with tests);
-* a representation for conjectures and theorems;
-* the Boolean and Natural data types.
+* a representation for Algebraic Abstract Data Types (with tests);
+* a representation for rewrite rules and strategies;
+* parts of the Boolean and Natural data types;
+* some strategy generators.
 
 ## Comments on Code
 
@@ -67,13 +72,14 @@ The `Adt` module contains the following "classes":
 * `Variable` to represent variables;
 * `Operation` to represent operations (and generators);
 * `Term` to represent terms;
-* `Axiom` to represent axioms.
+* `Rule` to represent rewrite rules;
+* `Strategy` to represent strategies.
 
 ### Sort
 
 * `Sort "sort"` returns a new sort that will be printed "sort".
 * `sort [Adt.name]` returns the name of `sort`.
-* `sort [Adt.axioms]` returns a table that stores the axioms for `sort`.
+* `sort [Adt.rules]` returns a table that stores the rules for `sort`.
 * `getmetatable (sort) == Adt.Sort` tests if `sort` is a sort.
 * `tostring (sort)` returns a string representation of `sort`.
 * `sort_1 == sort_2` tests if the two sorts are the same one.
@@ -160,116 +166,45 @@ result = term [Operation] (Fun.frommap (term)
        : tomap ())
 ```
 
-### Axiom
+### Rule
 
-* `Adt.axiom { lhs, rhs, when = when }` returns an axiom of the form
+* `Adt.rule { lhs, rhs, when = when }` returns an rule of the form
   `when => lhs = rhs`.
    The `when` parameter is optional, but must be of `Boolean` sort if given.
    It differs from the slides, when a condition is a conjunction of
    term equalities.
-* `sort [Adt.Axioms].myaxiom = Adt.axiom { ... }` allows to store the axiom
-  with key `myaxiom`.
-* `getmetatable (axiom) == Adt.Axiom` tests if `axiom` is an axiom.
-* `tostring (axiom)` returns a string representation of `axiom`.
-* `axiom_1 == axiom_2` tests if the two axioms are equal.
+* `sort [Adt.Rules].myrule = Adt.rule { ... }` allows to store the rule
+  with key `myrule`.
+* `getmetatable (rule) == Adt.Rule` tests if `rule` is an rule.
+* `tostring (rule)` returns a string representation of `rule`.
+* `rule_1 == rule_2` tests if the two rules are equal.
 
-### Theorems
+### Strategies
 
-The `adt.theorem` module returns the `Theorem` class:
+* `Strategy (f)` creates a new strategy, where `f` is a function that
+  takes a term (or a variable, or `nil`) and returns the transformed term,
+  or `nil` if the strategy does not apply on the term.
+* `strategy (term)` applies `strategy` on `term`. It returns either a new term
+  or `nil` in case of failure.
+* `Strategy.fail` is the fail strategy.
+* `Strategy.identity` is the identity strategy.
+* `Strategy.rule (rule)` returns a strategy that applies the rewriting rule
+  `rule` to the terms.
+* Other strategies are named as in the course, except repeat that has been
+  named `fixpoint`.
+* `Strategy.recursive (f)` creates a recursive strategy. Its parameter `f` is
+  a function that takes as unique parameter the current strategy (named `x` in
+  the course), and returns the created strategy. For instance:
 
-* `Theorem.Conjecture { lhs, rhs, when = when }` returns a conjecture of the
-  form `when => lhs = rhs`.
-  The `when` parameter is optional, but must be of `Boolean` sort if given.
-* `Theorem { lhs, rhs, when = when, variables = variables }` returns a theorem
-  of the form `when => lhs = rhs`.
-  The `when` parameter is optional, but must be of `Boolean` sort if given.
-  It differs from the slides, when a condition is a conjunction of
-  term equalities.
-  The `variables` parameter is a mapping from the variables used in axioms
-  to the variables used in the theorem.
-  It stores the mapping when a theorem is built above another one to allow
-  easier manipulation.
-* `getmetatable (theorem) == Theorem` tests if `theorem` is a theorem.
-* `tostring (theorem)` returns a string representation of `theorem`.
-* `theorem_1 == theorem_2` tests if the two theorems are equal.
-
-### Theorem generators
-
-* `Theorem.conjecture (conjecture)` creates a new theorem from `conjecture`.
-  It must be used only internally by `Theorem.inductive`.
-* `Theorem.axiom (axiom)` creates a new theorem from `axiom`.
-* `Theorem.reflexivity (term)` creates a new theorem `term = term`.
-* `Theorem.symmetry (theorem)` creates a new theorem
-  `theorem.when => theorem [2] = theorem [1]`.
-* `Theorem.transitivity (lhs, rhs)` creates a new theorem
-  `lhs [1] = rhs [2]`.
-  It must take into account the conditions of the theorems,
-  contrary to the slides.
-  If transitivity cannot apply, it returns `nil`.
-* `Theorem.substitutivity (operation, operands)` applies substitutivity.
-  It creates a new theorem by applying `operation` to the `operands`.
-  `operands` is a table that corresponds to the operand of the operation,
-  except that it contains theorems instead of terms.
-  It must take into account the conditions of the theorems,
-  contrary to the slides.
-  If substitutivity cannot apply, it returns `nil`.
-* `Theorem.substitution (theorem, variable, replacement)` applies substitution
-  to `theorem`. `variable` is the variable to replace, and `replacement` is
-  a term or variable to use as replacement.
-  It must take into account the conditions of the theorem,
-  contrary to the slides.
-  If substitution cannot apply, it returns `nil`.
-* `Theorem.cut (theorem, replacement)` applies `cut` to `theorem`.
-  `replacement` is the `cond => u = u'` in the slides.
-  If cut cannot apply, it returns `nil`.
-  It works differently than in the course, because of our representation
-  for conditions. Instead of looking for a term equality, `cut` has to
-  search a `Boolean.Equals { ... }` term.
-* `Theorem.inductive (conjecture, variable, t)` proves inductively
-  `conjecture`.
-  Table `t` is a mapping from the generators (type `Operation`) of the sort
-  of `variable` to functions, that take as only parameter the conjecture
-  seen as a theorem, and return the theorem proven when applying the
-  generator on `variable`.
-  `Theorem.inductive` proves the `conjecture` for all generators of
-  the sort of `variable`, and thus proves the `conjecture` to be a theorem.
-
-### Auxiliary functions
-
-* The local function `simplify (term)` simplifies a Boolean expression
-  used in conditions,
-  for instance by removing it totally when it is `Boolean.True {}`.
-* The local function `rename (term, variables)` renames all variables
-  of `term` with fresh new variables.
-  It is always used when building a new theorem or conjecture,
-  so each theorem or conjecture uses a set of variables that totally differ
-  from other theorems, conjectures and axioms.
-  Take care to use `theorem.variables [v]` when referring to variable `v`
-  of the axiom used to build `theorem`.
-* `theorem.variables` or `conjecture.variables` are mappings from variables
-  to variables, that stores as keys the variables of the original axiom used
-  to create the theorem, and as values the equivalent variables in `theorem`.
-* The local function `all_variables (x, variables)` puts in the `variable`
-  table all variables used in the `x` parameter (that can be a theorem,
-  a conjecture, an axiom, or a term).
-  `variables` is a mapping where each variable is used both as a key and
-  a value.
-* The slides use term equality,
-  for instance by using `t = t'` and `t' = t''` in transitivity.
-  It is a shortcut, that the implementation must take into account:
-  in our implementation, all theorems use different variables.
-  In practice, when a term appears twice in a rule, you must use
-  `Term.equivalence` between them instead of equality.
-  You must also apply the obtained mapping to terms for correctness,
-  using `term = term / mapping`.
-
-### Proofs
-
-A proof is a program starting with algebraic data types and axioms.
-It applies `Theorem.*` functions to create new theorems until the theorem
-to prove is reached.
-You can store theorems in Lua variables and combine them as in a normal program.
-Two proofs are given as examples in the tests of theorems.
+  ```lua
+  function Strategy.fixpoint (s)
+    assert (getmetatable (s) == Strategy,
+            "parameter must be a strategy")
+    return Strategy.recursive (function (r)
+      return Strategy.choice { Strategy.sequence { s, r }, Strategy.identity }
+    end)
+  end
+  ```
 
 ## Tests
 

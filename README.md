@@ -136,7 +136,7 @@ luarocks install rockspec/fun-scm-1.rockspec
 
 Evaluation will be:
 
-* do you have done anything at the deadline?
+* have you done anything at the deadline?
   (yes: 1 point, no: 0 point)
   * [ ] Done anything
 * do you have understood and implemented all the required notions?
@@ -178,7 +178,7 @@ luarocks install rockspec/hashids-scm-1.rockspec
 
 Evaluation will be:
 
-* do you have done anything at the deadline?
+* have you done anything at the deadline?
   (yes: 1 point, no: 0 point)
   * [ ] Done anything
 * do you have understood and implemented all the required notions?
@@ -222,7 +222,7 @@ luarocks install rockspec/hashids-scm-1.rockspec
 
 Evaluation will be:
 
-* do you have done anything at the deadline?
+* have you done anything at the deadline?
   (yes: 1 point, no: 0 point)
   * [ ] Done anything
 * do you have understood and implemented all the required notions?
@@ -236,6 +236,29 @@ Evaluation will be:
   * [ ] Substitutivity
   * [ ] Substitution
   * [ ] Cut
+* do you have correctly written and tested your code?
+  (no: -0.5 point for each)
+  * [ ] Coding standards
+  * [ ] Tests
+  * [ ] Code coverage
+
+| Grade |
+| ----- |
+|       |
+
+### Homework #4
+
+Evaluation follows the questions:
+
+* have you done anything at the deadline?
+  (yes: 1 point, no: 0 point)
+  * [ ] Done anything
+* do you have understood and implemented all the required notions?
+  (all: 4 points, none: 0 point)
+  * [ ] Rewrite rules in specs
+  * [ ] Strategies
+* do you have defined an adt that really tests the strategies?
+  (yes: 2 point)
 * do you have correctly written and tested your code?
   (no: -0.5 point for each)
   * [ ] Coding standards
