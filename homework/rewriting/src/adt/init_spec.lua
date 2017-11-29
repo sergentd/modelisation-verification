@@ -338,6 +338,18 @@ describe ("#adt", function ()
 
   it ("can create and apply a one strategy", function ()
     -- TODO
+    local sort = Adt.Sort "sort"
+    sort.empty = {}
+    sort.unary = { sort }
+    sort.binary = { sort, sort }
+    local t1 = sort.cons { sort.empty {} }
+    local r1 = Adt.Rule { sort._x, sort.unary { sort._x } }
+    local s1 = Adt.Strategy.one (Adt.Strategy.rule (r1))
+    assert.are.equal (getmetatable (s1), Adt.Strategy)
+    assert.are.equal (s1 (t1), sort.binary {
+                                  sort.unary { sort.empty {} },
+                                  sort.empty {}
+                                })
   end)
 
   it ("can create and apply a try strategy", function ()
