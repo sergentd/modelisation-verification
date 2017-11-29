@@ -34,36 +34,36 @@ Natural [Adt.rules].addition_nonzero = Adt.rule {
 -- TODO: define rules for other operations
 
 -- Decrement
-Natural [Adt.axioms].decrement = Adt.axiom {
+Natural [Adt.rules].decrement = Adt.rule {
   Natural.Decrement { Natural.Successor { Natural._v } },
   Natural._v,
 }
 
 -- Substraction
-Natural [Adt.axioms].subtraction_zero = Adt.axiom {
+Natural [Adt.rules].subtraction_zero = Adt.rule {
   Natural.Subtraction { Natural._x, Natural.Zero {} },
   Natural._x
 }
-Natural [Adt.axioms].subtraction_nonzero = Adt.axiom {
+Natural [Adt.rules].subtraction_nonzero = Adt.rule {
   Natural.Subtraction { Natural._x, Natural.Decrement { Natural._y } },
   Natural.Decrement { Natural.Subtraction { Natural._x, Natural._y } }
 }
-Natural [Adt.axioms].sx_substraction_sy = Adt.axiom {
+Natural [Adt.rules].sx_substraction_sy = Adt.rule {
   Natural.Subtraction { Natural.Successor { Natural._x },
                         Natural.Successor { Natural._y } },
   Natural.Subtraction { Natural._x, Natural._y }
 }
 
 -- Is_even
-Boolean [Adt.axioms].is_even_zero = Adt.axiom {
+Boolean [Adt.rules].is_even_zero = Adt.rule {
   Boolean.Is_even { Natural.Zero {} },
   Boolean.True {}
 }
-Boolean [Adt.axioms].is_even_nonzero = Adt.axiom {
+Boolean [Adt.rules].is_even_nonzero = Adt.rule {
   Boolean.Is_even { Natural._x },
   Boolean.Not { Boolean.Is_even { Natural.Decrement { Natural._x } } }
 }
-Natural [Adt.axioms].is_even_sx = Adt.axiom {
+Natural [Adt.rules].is_even_sx = Adt.rule {
   Boolean.Is_even { Natural.Successor { Natural._x } },
   Boolean.Not { Boolean.Is_even { Natural._x } }
 }

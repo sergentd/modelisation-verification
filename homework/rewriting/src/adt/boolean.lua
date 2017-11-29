@@ -50,46 +50,46 @@ Boolean[Adt.rules].and_false_x = Adt.rule{
   Boolean.And{Boolean.False {}, Boolean._x },
   Boolean.False {}
 }
-Boolean [Adt.axioms].and_x_y = Adt.axiom {
+Boolean [Adt.rules].and_x_y = Adt.rule {
   Boolean.And { Boolean._x, Boolean._y },
   Boolean.And { Boolean._y, Boolean._x },
 }
 
 -- Or
-Boolean [Adt.axioms].or_x_y = Adt.axiom {
+Boolean [Adt.rules].or_x_y = Adt.rule {
   Boolean.Or { Boolean._x, Boolean._y },
   Boolean.Or { Boolean._y, Boolean._x },
 }
 
-Boolean [Adt.axioms].or_true_x = Adt.axiom {
+Boolean [Adt.rules].or_true_x = Adt.rule {
   Boolean.Or { Boolean.True {}, Boolean._x },
   Boolean.True {},
 }
 
-Boolean [Adt.axioms].or_false_x = Adt.axiom {
+Boolean [Adt.rules].or_false_x = Adt.rule {
   Boolean.Or { Boolean.False {}, Boolean._x },
   Boolean._x,
 }
 
 -- Xor
-Boolean [Adt.axioms].xor_x_y = Adt.axiom {
+Boolean [Adt.rules].xor_x_y = Adt.rule {
   Boolean.Xor { Boolean._x, Boolean._y },
   Boolean.And { Boolean.Or { Boolean._x, Boolean._y },
                 Boolean.Not { Boolean.And { Boolean._x, Boolean._y } } },
 }
 
 -- Implies
-Boolean [Adt.axioms].true_implies_true = Adt.axiom {
+Boolean [Adt.rules].true_implies_true = Adt.rule {
   Boolean.Implies { Boolean.True {}, Boolean.True {} },
   Boolean.True {},
 }
 
-Boolean [Adt.axioms].true_implies_false = Adt.axiom {
+Boolean [Adt.rules].true_implies_false = Adt.rule {
   Boolean.Implies { Boolean.True {}, Boolean.False {} },
   Boolean.False {}
 }
 
-Boolean [Adt.axioms].false_implies_x = Adt.axiom {
+Boolean [Adt.rules].false_implies_x = Adt.rule {
   Boolean.Implies { Boolean.False {}, Boolean._x },
   Boolean.True {},
 }
