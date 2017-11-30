@@ -225,27 +225,27 @@ Evaluation will be:
 
 * have you done anything at the deadline?
   (yes: 1 point, no: 0 point)
-  * [ ] Done anything
+  * [x] Done anything
 * do you have understood and implemented all the required notions?
   (all: 4 points, none: 0 point)
   * [ ] Substitutivity
-  * [ ] Substitution
-  * [ ] Cut
+  * [x] Substitution
+  * [x] Cut
   * [ ] Proof that `x+y = y+x`
 * do you have understood and implemented corners cases of all the required
   (all: 1 point, none: 0 point)
   * [ ] Substitutivity
-  * [ ] Substitution
-  * [ ] Cut
+  * [x] Substitution
+  * [x] Cut
 * do you have correctly written and tested your code?
   (no: -0.5 point for each)
   * [ ] Coding standards
-  * [ ] Tests
+  * [x] Tests
   * [ ] Code coverage
 
 | Grade |
 | ----- |
-|       |
+|     3.5  |
 
 ### Homework #4
 
