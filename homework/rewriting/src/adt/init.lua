@@ -361,6 +361,10 @@ function Strategy.all (s)
           "parameter must be a strategy")
   return Strategy (function (term)
     -- TODO
+    return term [Operation] (Fun.frommap (term))
+    : filter (function (k, _) return type (k) ~= "table" end)
+    : map    (function (k, v) return k, s (v) end)
+    : topmap ()
   end)
 end
 
@@ -368,6 +372,18 @@ function Strategy.one (s)
   assert (getmetatable (s) == Strategy,
           "parameter must be a strategy")
   -- TODO
+  return Strategy (function (term)
+    local i = 1
+    local t
+    repeat
+      t = s(term [i])
+    until (i > #s or t ~= nil)
+    if t == nil then
+      return Strategy.fail ()
+    end
+    term[i-1] = t
+    return term
+  end)
 end
 
 function Strategy.try (s)
@@ -407,18 +423,33 @@ function Strategy.topdown (s)
   assert (getmetatable (s) == Strategy,
           "parameter must be a strategy")
   -- TODO
+  return Strategy.recursive (function (r)
+    return Strategy.sequence { Strategy.all (r), s }
+  end)
 end
 
 function Strategy.innermost (s)
   assert (getmetatable (s) == Strategy,
           "parameter must be a strategy")
   -- TODO
+  return Strategy.recursive (function (r)
+    return Strategy.sequence {
+                      Strategy.all (r),
+                      Strategy.try (Strategy.sequence {s,r})
+    }
+  end)
 end
 
 function Strategy.outermost (s)
   assert (getmetatable (s) == Strategy,
           "parameter must be a strategy")
   -- TODO
+  return Strategy.recursive (function (r)
+    return Strategy.sequence {
+                      Strategy.try (Strategy.sequence {s,r}),
+                      Strategy.all (r)
+    }
+  end)
 end
 
 -- # Adt
