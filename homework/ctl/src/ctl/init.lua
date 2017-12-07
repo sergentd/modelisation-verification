@@ -85,6 +85,13 @@ Expression [Adt.rules].AX = Adt.rule {
     Expression._e,
   },
   -- TODO
+  Expression.Not {
+    Expression.EX {
+      Expression.Not {
+        Expression._e
+      }
+    }
+  }
 }
 
 Expression [Adt.rules].AG = Adt.rule {
@@ -92,6 +99,13 @@ Expression [Adt.rules].AG = Adt.rule {
     Expression._e,
   },
   -- TODO
+  Expression.Not {
+    Expression.EF {
+      Expression.Not {
+        Expression._e
+      }
+    }
+  }
 }
 
 Expression [Adt.rules].AF = Adt.rule {
@@ -99,6 +113,13 @@ Expression [Adt.rules].AF = Adt.rule {
     Expression._e,
   },
   -- TODO
+  Expression.Not {
+    Expression.EG {
+      Expression.Not {
+        Expression._e
+      }
+    }
+  }
 }
 
 Expression [Adt.rules].EF = Adt.rule {
@@ -106,6 +127,10 @@ Expression [Adt.rules].EF = Adt.rule {
     Expression._e,
   },
   -- TODO
+  Expression.EU {
+    Expression.True {},
+    Expression._e
+  }
 }
 
 Expression [Adt.rules].AU = Adt.rule {
@@ -114,6 +139,15 @@ Expression [Adt.rules].AU = Adt.rule {
     Expression._y,
   },
   -- TODO
+  Expression.And {
+    Expression.AF {
+      Expression._y
+    },
+    Expression.AW {
+      Expression._x,
+      Expression._y
+    }
+  }
 }
 
 Expression [Adt.rules].EW = Adt.rule {
@@ -122,6 +156,15 @@ Expression [Adt.rules].EW = Adt.rule {
     Expression._y,
   },
   -- TODO
+  Expression.Or {
+    Expression.EG {
+      Expression._x
+    },
+    Expression.EU {
+      Expression._x,
+      Expression._y
+    }
+  }
 }
 
 Expression [Adt.rules].AW = Adt.rule {
@@ -130,6 +173,19 @@ Expression [Adt.rules].AW = Adt.rule {
     Expression._y,
   },
   -- TODO
+  Expression.Not {
+    Expression.EU {
+      Expression.Not {
+        Expression._y
+      },
+      Expression.Not {
+        Expression.Or {
+          Expression._x,
+          Expression._y
+        }
+      }
+    }
+  }
 }
 
 function Ctl.reduce (formula)
@@ -164,16 +220,62 @@ function Ctl.compute (formula, initial, states)
     end)
   elseif formula [Adt.Operation] == Expression.Or then
     -- TODO
+    Fun.fromtable (formula):each (function (subformula)
+      Ctl.compute (subformula, initial, states)
+    end)
+    Fun.fromtable (states):each (function (state)
+      state.properties [formula] = Fun.fromtable (formula)
+      : any (function (subformula) return state.properties [subformula] end)
+    end)
   elseif formula [Adt.Operation] == Expression.EX then
     Ctl.compute (formula [1], initial, states)
     Fun.fromtable (states):each (function (state)
       state.properties [formula] = Fun.frommap (state.successors)
-        : any (function (_, successor) return successor.properties [formula [1]] end)
+      : any (function (_, successor) return successor.properties [formula [1]] end)
     end)
   elseif formula [Adt.Operation] == Expression.EG then
     -- TODO
+    Ctl.compute (formula [1], initial, states)
+    Fun.fromtable (states):each (function (state)
+      state.properties [formula] = state.properties [formula [1]]
+    end)
+    local tmp
+    local fixpoint
+    repeat
+      fixpoint = true
+      Fun.fromtable (states):each (function (state)
+        tmp = Fun.frommap (state.successors)
+        : any (function (_, successor) return successor.properties [formula [1]] end)
+        tmp = tmp and state.properties [formula]
+        if tmp ~= state.properties [formula] then
+          state.properties [formula] = tmp
+          fixpoint = false
+        end
+      end)
+    until fixpoint
   elseif formula [Adt.Operation] == Expression.EU then
     -- TODO
+    Ctl.compute (formula [1], initial, states)
+    Ctl.compute (formula [2], initial, states)
+    Fun.fromtable (states):each (function (state)
+      state.properties [formula] = state.properties [formula [2]]
+    end)
+    local tmp
+    local fixpoint
+    repeat
+      fixpoint = true
+      Fun.fromtable (states):each (function (state)
+        if state.properties [formula [1]] == true
+       and state.properties [formula]     == false then
+          tmp = Fun.frommap (state.successors)
+          : any (function (_, successor) return successor.properties [formula [1]] end)
+          if tmp then
+            state.properties [formula] = true
+            fixpoint = false
+          end
+        end
+      end)
+    until fixpoint
   else
     assert (false)
   end
