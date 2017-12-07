@@ -270,10 +270,10 @@ Evaluation follows the questions:
 
 * have you done anything at the deadline?
   (yes: 1 point, no: 0 point)
-  * [ ] Done anything
+  * [x] Done anything
 * do you have understood and implemented all the required notions?
   (all: 4 points, none: 0 point)
-  * [ ] Rewrite rules in specs
+  * [x] Rewrite rules in specs
   * [ ] Strategies
 * do you have defined an adt that really tests the strategies?
   (yes: 2 point)
@@ -285,4 +285,4 @@ Evaluation follows the questions:
 
 | Grade |
 | ----- |
-|       |
+|    4   |
