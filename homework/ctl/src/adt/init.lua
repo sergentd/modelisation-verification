@@ -378,6 +378,19 @@ function Strategy.one (s)
   assert (getmetatable (s) == Strategy,
           "parameter must be a strategy")
   -- TODO
+  return Strategy (function (term)
+    local l = 1
+    local t
+    repeat
+      t = s(term[1])
+      l = l + 1
+    until (l > #s or t ~=nil)
+    if t == nil then
+      return Strategy.fail ()
+    end
+    term [l-1] = t
+    return term
+  end)
 end
 
 function Strategy.try (s)
@@ -433,6 +446,9 @@ function Strategy.outermost (s)
   assert (getmetatable (s) == Strategy,
           "parameter must be a strategy")
   -- TODO
+  return Strategy.recursive (function (r)
+    return Strategy.sequence { Strategy.try (Strategy.sequence { s, r }), Strategy.all (r) }
+  end)
 end
 
 -- # Adt

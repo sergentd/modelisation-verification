@@ -70,16 +70,14 @@ Expression [Adt.rules].And = Adt.rule {
     Expression._x,
     Expression._y,
   },
-  Expression.Not {
-    Expression.Or {
-      Expression.Not {
-        Expression._x,
-      },
-      Expression.Not {
-        Expression._y,
-      },
+  Expression.Or {
+    Expression.Not {
+      Expression._x,
     },
-  }
+    Expression.Not {
+      Expression._y,
+    },
+  },
 }
 
 Expression [Adt.rules].AX = Adt.rule {
@@ -271,7 +269,7 @@ function Ctl.compute (formula, initial, states)
        and state.properties [formula]     == false then
           tmp = Fun.frommap (state.successors)
           : any (function (_, successor) return successor.properties [formula [1]] end)
-          if tmp then
+          if tmp == nil then
             state.properties [formula] = true
             fixpoint = false
           end
