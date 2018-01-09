@@ -12,7 +12,26 @@ return function (petrinet)
 
   local Dd = require "dd" (variables)
 
-  local transitions = -- TODO
+ -- TODO
+  local transitions = Fun.frommap (petrinet):filter (function (_, v)
+    return getmetatable (v) == Petrinet.Transition
+  end):map (function (_, transition)
+      local pre  = transition:pre  ()
+      local post = transition:post ()
+      return Dd.filter (function (state)
+        return pre:all (function (arc)
+          return arc.valuation and state [arc.place]
+        end)
+      end) .. Dd.map (function (state)
+      pre :each (function (arc)
+        state [arc.place] = false
+      end)
+      post:each (function (arc)
+        state [arc.place] = true
+      end)
+    return state
+    end)
+  end):totable ()
 
   local initial = Dd.create (Fun.frommap (petrinet):filter (function (_, v)
     return getmetatable (v) == Petrinet.Place

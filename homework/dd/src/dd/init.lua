@@ -103,6 +103,17 @@ return function (variables)
 
   function Dd.dontcare (dd)
     -- TODO: return the `dd` with don't care applied
+    if getmetatable (dd) == Terminal then
+      return dd
+    elseif getmetatable (dd) == Node then
+      if dd[true] == dd[false] then
+        return dd[true]
+      else
+        return dd
+      end
+    else
+      assert (false)
+    end
   end
 
   function Dd.unique (dd)
@@ -176,12 +187,66 @@ return function (variables)
 
   local function mul (lhs, rhs)
     -- TODO
+    local vars = Fun.fromtable (variables)
+    if getmetatable (lhs) == Terminal and getmetatable (rhs) == Terminal then
+      return terminal (lhs.value and rhs.value)
+    elseif getmetatable (lhs) == Node and getmetatable (rhs) == Node
+       and lhs.variable == rhs.variable then
+      return node {
+        variable = rhs.variable,
+        [true ]  = lhs [true ] * rhs [true ],
+        [false]  = lhs [false] * rhs [false],
+      }
+    elseif getmetatable (lhs) == Node and getmetatable (rhs) == Terminal
+        or getmetatable (lhs) == node and getmetatable (rhs) == Node
+       and vars:index (lhs.variable) < vars:index (rhs.variable) then
+      return node {
+        variable = lhs.variable,
+        [true ]  = lhs[true ] * rhs,
+        [false]  = lhs[false] * rhs,
+      }
+    elseif getmetatable (lhs) == Terminal and getmetatable (rhs) == Node
+        or getmetatable (lhs) == node and getmetatable (rhs) == Node
+       and vars:index (lhs.variable) > vars:index (rhs.variable) then
+      return node {
+        variable = rhs.variable,
+        [true ]  = lhs * rhs [true ],
+        [false]  = lhs * rhs [false],
+      }
+    end
   end
   Terminal.__mul = mul
   Node    .__mul = mul
 
   local function sub (lhs, rhs)
     -- TODO
+    local vars = Fun.fromtable (variables)
+    if getmetatable (lhs) == Terminal and getmetatable (rhs) == Terminal then
+      return terminal (lhs.value and not rhs.value)
+    elseif getmetatable (lhs) == Node and getmetatable (rhs) == Node
+       and lhs.variable == rhs.variable then
+      return node {
+        variable = rhs.variable,
+        [true ]  = lhs + rhs [true ],
+        [false]  = lhs + rhs [false],
+      }
+    elseif getmetatable (lhs) == Node and getmetatable (rhs) == Terminal
+        or getmetatable (lhs) == node and getmetatable (rhs) == Node
+       and vars:index (lhs.variable) < vars:index (rhs.variable) then
+      return node {
+        variable = lhs.variable,
+        [true ]  = lhs[true ] - rhs,
+        [false]  = lhs[false] - rhs,
+      }
+    elseif getmetatable (lhs) == Terminal and getmetatable (rhs) == Node
+        or getmetatable (lhs) == node and getmetatable (rhs) == Node
+       and vars:index (lhs.variable) > vars:index (rhs.variable) then
+      return node {
+        variable = rhs.variable,
+        [true ]  = lhs - rhs [true ],
+        [false]  = lhs - rhs [false],
+      }
+    end
   end
   Terminal.__sub = sub
   Node    .__sub = sub
@@ -229,8 +294,50 @@ return function (variables)
     return setmetatable ({ f = f }, Filter)
   end
 
+  function Filter.compute (filter, i, data)
+    if i > #variables then
+      if filter.f (data) then
+        return terminal (true)
+      else
+        return terminal (false)
+      end
+    else
+      local v = variables [i]
+      if data [v] == nil then
+        local _true  = Fun.frommap (data):tomap ()
+        _true  [v] = true
+        local _false = Fun.frommap (data):tomap ()
+        _false [v] = false
+        return Filter.compute (filter, i+1, _true )
+             + Filter.compute (filter, i+1, _false)
+      else
+        return Filter.compute (filter, i+1, data)
+      end
+    end
+  end
+
   function Filter.__call (filter, dd, data)
     -- TODO
+    data = data or {}
+    if getmetatable (dd) == Terminal then
+      if dd.value then
+        return Filter.compute (filter, 1, data)
+      else
+        return terminal (false)
+      end
+    elseif getmetatable (dd) == Node then
+      local _true  = Fun.frommap (data):tomap ()
+      _true  [dd.variable] = true
+      local _false = Fun.frommap (data):tomap ()
+      _false [dd.variable] = false
+      return node {
+        variable = dd.variable,
+        [true ] = filter (dd [true ], _true ),
+        [false] = filter (dd [false], _false),
+      }
+    else
+      assert (false)
+    end
   end
 
   local Map = {}
@@ -239,8 +346,24 @@ return function (variables)
     return setmetatable ({ f = f }, Map)
   end
 
+  function Map.compute (map, dd)
+    -- TODO
+    return map, dd
+  end
+
   function Map.__call (map, dd)
     -- TODO
+    if getmetatable (dd) == Terminal then
+      if dd.value then
+        return Map.compute (map, dd)
+      else
+        return terminal (false)
+      end
+    elseif getmetatable (dd) == Node then
+      return map
+    else
+      assert (false)
+    end
   end
 
   local Composition  = {}
