@@ -346,21 +346,15 @@ return function (variables)
     return setmetatable ({ f = f }, Map)
   end
 
-  function Map.compute (map, dd)
-    -- TODO
-    return map, dd
-  end
-
   function Map.__call (map, dd)
-    -- TODO
     if getmetatable (dd) == Terminal then
       if dd.value then
-        return Map.compute (map, dd)
+        return -- TODO
       else
         return terminal (false)
       end
     elseif getmetatable (dd) == Node then
-      return map
+      return map -- TODO
     else
       assert (false)
     end
